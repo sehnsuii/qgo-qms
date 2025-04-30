@@ -1,9 +1,8 @@
-// Welcome Page
+//Customer Selection - 
 
 import { Head, Link } from '@inertiajs/react';
 
-
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function CustomerSelection({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -25,7 +24,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     src="https://upload.wikimedia.org/wikipedia/commons/a/ad/6346Poblacion_City_Hall_San_Pedro_Laguna_27.jpg"
                 />
 
-                <header className="relative w-full bg-white shadow-md py-4 flex items-center px-6">
+                <header className="relative w-full bg-white shadow-md py-4 flex items-center justify-between px-6">
                     <div className="flex items-center w-1/3">
                         <img
                             src="https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png"
@@ -35,14 +34,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         <h1 className="text-xl font-semibold text-black">City of San Pedro Laguna</h1>
                     </div>
                     
-                    <div className="flex-1 flex justify-center">
+                    <div className="flex justify-center flex-1">
+                    <Link href="/">
                         <img
                             src="https://i.pinimg.com/736x/b0/1d/a1/b01da1459e9c98b05f0458aeecc6a87f.jpg"
                             alt="QGo Logo"
                             className="h-16"
                         />
+                    </Link>
                     </div>
-                
+
                     <nav className="w-1/3 flex justify-end">
                         {auth.user ? (
                             <Link
@@ -70,20 +71,26 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     </nav>
                 </header>
 
-                <div className="relative flex flex-1 w-full items-center justify-center">
-                <div className="bg-green-600 p-10 rounded-3xl shadow-lg w-[800px] h-[510px] flex flex-col items-center justify-center">
-                        <h2 className="text-7xl font-bold text-white mb-8 font-[Verdana]">Welcome</h2>
-                        <h2 className="text-2xl font-semibold text-white mb-8 ">to</h2>
-                        <h2 className="text-4xl font-semibold text-white mb-8 ">City of San Pedro Laguna</h2>
-                        <hr className="w-4/5 border-2 border-white my-4 mx-auto" />
-                        <p className="text-xl font-small text-white mb-5 font-[Verdana]">Please get your queue here</p>
-
-                        <Link
-                            href="/CustomerSelection"
-                            className="mt-5 px-14 py-5 bg-white text-green-600 text-lg font-bold rounded-lg shadow-md hover:bg-gray-200"
-                        >
-                            START
-                        </Link>
+                <div className="flex flex-1 flex-col items-center justify-center relative">
+                    <div className="bg-green-600 p-10 rounded-3xl shadow-lg w-[800px] h-[500px] flex flex-col items-center justify-center">
+                        <h2 className="text-6xl font-bold text-white mb-3 font-[Verdana]">UNA SA LAGUNA</h2>
+                        <hr className="w-4/5 border-2 border-white my-4 mx-auto"/>
+                        <p className="text-xl font-small text-white mb-5">Select priority if you are pregnant, PWD, or Senior Citizen. If others, please select regular.</p>
+                        <p className="text-xl font-small text-white mb-5">Piliin ang priyoridad kung ikaw ay buntis, PWD, o Senior Citizen. Kung iba, paki-pindot ang regular.</p>
+                        <div className="flex justify-center gap-6 mt-6">
+                            <Link
+                                href="/ServiceSelection"
+                                className="mt-4 px-14 py-3 bg-white text-green-600 text-lg font-bold rounded-lg shadow-md hover:bg-gray-200"
+                            >
+                                PRIORITY CUSTOMER
+                            </Link>
+                            <Link
+                                href="/ServiceSelection"
+                                className="mt-4 px-14 py-3 bg-white text-green-600 text-lg font-bold rounded-lg shadow-md hover:bg-gray-200"
+                            >
+                                REGULAR CUSTOMER
+                            </Link>
+                        </div>
                     </div>
                 </div>
 

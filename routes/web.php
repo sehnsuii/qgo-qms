@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +21,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/Welcome', function () {
+    return Inertia::render('Welcome');
+});
+Route::get('/CustomerSelection', function () {
+    return Inertia::render('CustomerSelection');
+});
+Route::get('/ServiceSelection', function () {
+    return Inertia::render('ServiceSelection');
+});
+Route::get('/DetailSummary', function () {
+    return Inertia::render('DetailSummary');
+});
+Route::get('/PrintQueue', function () {
+    return Inertia::render('PrintQueue');
+});
+Route::get('/Back', function () {
+    return Inertia::render('Back'); // 
 });
 
 require __DIR__.'/auth.php';
