@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('queuings', function (Blueprint $table) {
+        Schema::create('counters', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('counter_id')->nullable();
-            $table->string('queue_no')->nullable()->index();
-            $table->string('customer_type')->index();
-            $table->string('appointment_type')->index();
-            $table->string('status')->default('Waiting');
+            $table->unsignedBigInteger('user_id')->index();
+            $table->string('name')->index();
+            $table->string('is_available')->default(1);
+            $table->string('is_open')->default(1);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('queuings');
+        Schema::dropIfExists('counters');
     }
 };

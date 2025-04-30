@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QueuingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,6 +27,12 @@ Route::middleware('auth')->group(function () {
 Route::get('/Welcome', function () {
     return Inertia::render('Welcome');
 });
+Route::get('/QueueDisplay', function () {
+    return Inertia::render('QueueDisplay');
+});
+Route::get('/FormWizard', function () {
+    return Inertia::render('FormWizard');
+});
 Route::get('/CustomerSelection', function () {
     return Inertia::render('CustomerSelection');
 });
@@ -40,6 +47,11 @@ Route::get('/PrintQueue', function () {
 });
 Route::get('/Back', function () {
     return Inertia::render('Back'); // 
+});
+
+Route::group(['prefix' => 'api'], function () {
+    Route::get('/queuing', [QueuingController::class, 'index']);
+    Route::post('/queuing', [QueuingController::class, 'store']);
 });
 
 require __DIR__.'/auth.php';
