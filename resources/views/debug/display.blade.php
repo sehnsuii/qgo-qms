@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Debug View</title>
+  <title>TV Display</title>
   @vite(['resources/css/app.css'])
 </head>
 
@@ -29,6 +29,7 @@
           {{ $counter->queue }}
         @endif
       </p>
+      <a href="{{ route('debug.counter', $counter) }}" class="text-blue-500 hover:underline">View Details</a>
     </div>
   @endforeach
 </body>

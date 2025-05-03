@@ -51,6 +51,11 @@ Route::get('/PrintQueue', function () {
 Route::get('/debug', [QueueController::class, 'showAll'])->name('debug.index');
 Route::get('/debug/form', [QueueController::class, 'create'])->name('debug.form');
 Route::get('/debug/display', [CounterController::class, 'display'])->name('debug.display');
+Route::get('/debug/counter/{counter}', [CounterController::class, 'counter'])->name('debug.counter');
+
+Route::patch('/debug/counter/{counter}', [CounterController::class, 'setWaiting'])->name('debug.counter.wait');
+Route::patch('/debug/counter/{counter}/complete', [CounterController::class, 'setCompleted'])->name('debug.counter.complete');
+Route::patch('/debug/counter/{counter}/cancel', [CounterController::class, 'setCancelled'])->name('debug.counter.cancel');
 
 Route::patch('/queues/{queue}/wait', [QueueController::class, 'setWaiting'])->name('queues.wait');
 Route::patch('/queues/{queue}/serve', [QueueController::class, 'setServing'])->name('queues.serve');
