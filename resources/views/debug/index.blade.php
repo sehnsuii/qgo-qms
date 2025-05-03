@@ -16,7 +16,10 @@
     </div>
   @endif
 
-  <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('debug.form') }}'>Create New Queue</a>
+  <nav>
+    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('debug.form') }}' target="_blank">Create New Queue</a>
+    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('debug.display') }}' target="_blank">TV Display</a>
+  </nav>
 
   <div class="mb-4">
     {{ $queues->links() }}
