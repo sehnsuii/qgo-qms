@@ -12,8 +12,13 @@ class Queue extends Model
         'customer_type',
         // 'service_id',
         'status',
-        // 'counter_id',
+        'counter_id',
     ];
     /** @use HasFactory<\Database\Factories\QueueFactory> */
     use HasFactory;
+
+    public function counter()
+    {
+        return $this->belongsTo(Counters::class);
+    }
 }
