@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Queue extends Model
 {
     protected $fillable = [
+        'created_at',
+        'updated_at',
         'queue_number',
         'customer_type',
         'service_id',

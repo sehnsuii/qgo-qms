@@ -14,7 +14,7 @@ class QueueSeeder extends Seeder
      */
     public function run(): void
     {
-        $totalQueues = 50;
+        $totalQueues = 0;
         $queuesCreated = 0;
         $currentDate = Carbon::today();
 

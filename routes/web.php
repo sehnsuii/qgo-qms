@@ -48,10 +48,13 @@ Route::get('/PrintQueue', function () {
 });
 
 Route::get('/debug', [QueueController::class, 'showAll'])->name('debug.index');
+Route::get('/debug/form', [QueueController::class, 'create'])->name('debug.form');
 
 Route::patch('/queues/{queue}/wait', [QueueController::class, 'setWaiting'])->name('queues.wait');
 Route::patch('/queues/{queue}/serve', [QueueController::class, 'setServing'])->name('queues.serve');
 Route::patch('/queues/{queue}/complete', [QueueController::class, 'setComplete'])->name('queues.complete');
 Route::patch('/queues/{queue}/cancel', [QueueController::class, 'setCancelled'])->name('queues.cancel');
+
+Route::post('/queues', [QueueController::class, 'store'])->name('queues.store');
 
 require __DIR__ . '/auth.php';

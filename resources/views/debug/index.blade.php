@@ -7,15 +7,16 @@
   @vite(['resources/css/app.css'])
 </head>
 
-<body>
+<body class="p-6">
   @if (session('success'))
-    <div class="alert alert-success" role="alert">
-      {{ session('success') }}
-      <p>This is a sample success message!</p>
+    <div class="flex align-center justify-center bg-gray-800 p-4 rounded shadow-sm mb-4">
+      <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+      </div>
     </div>
   @endif
-  <h1>Debug View</h1>
-  <p>This is a debug view for testing purposes.</p>
+
+  <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('debug.form') }}'>Create New Queue</a>
 
   <div class="mb-4">
     {{ $queues->links() }}
@@ -25,47 +26,64 @@
     @foreach ($queues as $queue)
       <li class='list-none'>
         <div class="border p-4 rounded shadow-sm">
-          <div class='mb-4'>
-            <strong>Created At:</strong> {{ $queue->created_at }}<br>
-            <strong>Updated At:</strong> {{ $queue->updated_at }}<br>
+
+
+          <div class='flex flex-row align-center justify-between'>
+            <div>
+              <strong>Created At:</strong> {{ $queue->created_at }}<br>
+              <strong>Updated At:</strong> {{ $queue->updated_at }}<br>
+              <strong>Queue Number:</strong> {{ $queue->queue_number }}<br>
+              @if ($queue->status == 'Waiting')
+                <strong>Queue Status:</strong> <span class="text-yellow-500">{{ $queue->status }}</span><br>
+              @elseif ($queue->status == 'Now Serving')
+                <strong>Queue Status:</strong> <span class="text-green-500">{{ $queue->status }}</span><br>
+              @elseif ($queue->status == 'Completed')
+                <strong>Queue Status:</strong> <span class="text-blue-500">{{ $queue->status }}</span><br>
+              @elseif ($queue->status == 'Cancelled')
+                <strong>Queue Status:</strong> <span class="text-gray-500">{{ $queue->status }}</span><br>
+              @endif
+              <strong>Service Type:</strong> {{ $queue->service->name }}<br>
+              <strong>Service Description:</strong> {{ $queue->service->description }}<br>
+              <strong>Counter:</strong> {{ $queue->counter_id }}<br>
+            </div>
+
+            <div class="flex flex-col">
+              <div class="flex flex-row gap-2">
+                <form method="POST" action="{{ route('queues.wait', $queue) }}">
+                  @csrf
+                  @method('PATCH')
+                  <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700">
+                    Change Status to Waiting
+                  </button>
+                </form>
+                <form method="POST" action="{{ route('queues.serve', $queue) }}">
+                  @csrf
+                  @method('PATCH')
+                  <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
+                    Change Status to Now Serving
+                  </button>
+                </form>
+              </div>
+              <div class="flex flex-row gap-2">
+                <form method="POST" action="{{ route('queues.complete', $queue) }}">
+                  @csrf
+                  @method('PATCH')
+                  <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                    Change Status to Completed
+                  </button>
+                </form>
+                <form method="POST" action="{{ route('queues.cancel', $queue) }}">
+                  @csrf
+                  @method('PATCH')
+                  <button type="submit" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">
+                    Change Status to Cancelled
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
-          <div>
-            <strong>Queue Number:</strong> {{ $queue->queue_number }}<br>
-            <strong>Queue Status:</strong> {{ $queue->status }}<br>
-            <strong>Service Type:</strong> {{ $queue->service->name }}<br>
-            <strong>Service Description:</strong> {{ $queue->service->description }}<br>
-            <strong>Counter:</strong> {{ $queue->counter_id }}<br>
-          </div>
-          <div class="mt-2 flex flex-row gap-2">
-            <form method="POST" action="{{ route('queues.wait', $queue) }}">
-              @csrf
-              @method('PATCH')
-              <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                Change Status to 'Waiting' (Current: {{ $queue->status }})
-              </button>
-            </form>
-            <form method="POST" action="{{ route('queues.serve', $queue) }}">
-              @csrf
-              @method('PATCH')
-              <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                Change Status to 'Now Serving' (Current: {{ $queue->status }})
-              </button>
-            </form>
-            <form method="POST" action="{{ route('queues.complete', $queue) }}">
-              @csrf
-              @method('PATCH')
-              <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                Change Status to 'Completed' (Current: {{ $queue->status }})
-              </button>
-            </form>
-            <form method="POST" action="{{ route('queues.cancel', $queue) }}">
-              @csrf
-              @method('PATCH')
-              <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                Change Status to 'Cancelled' (Current: {{ $queue->status }})
-              </button>
-            </form>
-          </div>
+
+
         </div>
       </li>
     @endforeach
