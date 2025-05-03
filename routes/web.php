@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QueuingController;
 use Illuminate\Foundation\Application;
@@ -45,13 +46,9 @@ Route::get('/DetailSummary', function () {
 Route::get('/PrintQueue', function () {
     return Inertia::render('PrintQueue');
 });
-Route::get('/Back', function () {
-    return Inertia::render('Back'); // 
+
+Route::get('/debug', function () {
+    return view('debug.index');
 });
 
-Route::group(['prefix' => 'api'], function () {
-    Route::get('/queuing', [QueuingController::class, 'index']);
-    Route::post('/queuing', [QueuingController::class, 'store']);
-});
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
