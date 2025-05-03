@@ -10,7 +10,7 @@ use App\Models\Services;
 
 class QueueController extends Controller
 {
-    public function showAll()
+    public function display()
     {
         $queues = Queue::with('counter')->orderBy('created_at', 'desc')->paginate(6);
         return view('debug.index', ['queues' => $queues]);
@@ -47,7 +47,7 @@ class QueueController extends Controller
         $validated['status'] = 'Waiting';
 
         Queue::create($validated);
-        return redirect()->route('debug.index')->with('success', 'Queue created successfully.');
+        return redirect()->route('queues.display')->with('success', 'Queue created successfully.');
     }
 
     public function setWaiting(Queue $queue)

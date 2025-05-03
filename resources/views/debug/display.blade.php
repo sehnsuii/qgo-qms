@@ -29,7 +29,7 @@
           {{ $counter->queue }}
         @endif
       </p>
-      <a href="{{ route('debug.counter', $counter) }}" class="text-blue-500 hover:underline" target="_blank">View
+      <a href="{{ route('counter.show', $counter) }}" class="text-blue-500 hover:underline" target="_blank">View
         Details</a>
     </div>
   @endforeach

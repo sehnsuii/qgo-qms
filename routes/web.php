@@ -48,20 +48,21 @@ Route::get('/PrintQueue', function () {
     return Inertia::render('PrintQueue');
 });
 
-Route::get('/debug', [QueueController::class, 'showAll'])->name('debug.index');
-Route::get('/debug/form', [QueueController::class, 'create'])->name('debug.form');
-Route::get('/debug/display', [CounterController::class, 'display'])->name('debug.display');
-Route::get('/debug/counter/{counter}', [CounterController::class, 'counter'])->name('debug.counter');
 
-Route::patch('/debug/counter/{counter}', [CounterController::class, 'setWaiting'])->name('debug.counter.wait');
-Route::patch('/debug/counter/{counter}/complete', [CounterController::class, 'setCompleted'])->name('debug.counter.complete');
-Route::patch('/debug/counter/{counter}/cancel', [CounterController::class, 'setCancelled'])->name('debug.counter.cancel');
-
-Route::patch('/queues/{queue}/wait', [QueueController::class, 'setWaiting'])->name('queues.wait');
-Route::patch('/queues/{queue}/serve', [QueueController::class, 'setServing'])->name('queues.serve');
-Route::patch('/queues/{queue}/complete', [QueueController::class, 'setComplete'])->name('queues.complete');
-Route::patch('/queues/{queue}/cancel', [QueueController::class, 'setCancelled'])->name('queues.cancel');
-
+// Form Functions
+Route::get('/debug', [QueueController::class, 'display'])->name('queues.display');
+Route::get('/debug-form', [QueueController::class, 'create'])->name('queues.create');
 Route::post('/queues', [QueueController::class, 'store'])->name('queues.store');
+Route::patch('/Q-{queue}/wait', [QueueController::class, 'setWaiting'])->name('queue.wait');
+Route::patch('/Q-{queue}/serve', [QueueController::class, 'setServing'])->name('queue.serve');
+Route::patch('/Q-{queue}/complete', [QueueController::class, 'setComplete'])->name('queue.complete');
+Route::patch('/Q-{queue}/cancel', [QueueController::class, 'setCancelled'])->name('queue.cancel');
+
+// Counter Functions
+Route::get('/debug-display', [CounterController::class, 'display'])->name('counters.display');
+Route::get('/C-{counter}', [CounterController::class, 'counter'])->name('counter.show');
+Route::patch('/C-{counter}/wait', [CounterController::class, 'setWaiting'])->name('counter.wait');
+Route::patch('/C-{counter}/complete', [CounterController::class, 'setCompleted'])->name('counter.complete');
+Route::patch('/C-{counter}/cancel', [CounterController::class, 'setCancelled'])->name('counter.cancel');
 
 require __DIR__ . '/auth.php';
