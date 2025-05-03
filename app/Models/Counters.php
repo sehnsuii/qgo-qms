@@ -9,12 +9,13 @@ class Counters extends Model
 {
     protected $fillable = [
         'status',
+        'queue_id',
     ];
     /** @use HasFactory<\Database\Factories\CountersFactory> */
     use HasFactory;
 
     public function queue()
     {
-        return $this->hasMany(Queue::class);
+        return $this->belongsTo(Queue::class);
     }
 }

@@ -16,12 +16,6 @@ class QueueController extends Controller
         return view('debug.index', ['queues' => $queues]);
     }
 
-    public function show(Queue $queue)
-    {
-        $queue->load('counter');
-        return response()->json($queue);
-    }
-
     public function create()
     {
         $counters = Counters::all();
@@ -51,7 +45,6 @@ class QueueController extends Controller
         $validated['queue_number'] = $lastQueueToday ? $lastQueueToday->queue_number + 1 : 1;
 
         $validated['status'] = 'Waiting';
-        $validated['counter_id'] = null;
 
         Queue::create($validated);
         return redirect()->route('debug.index')->with('success', 'Queue created successfully.');
@@ -59,6 +52,13 @@ class QueueController extends Controller
 
     public function setWaiting(Queue $queue)
     {
+        $counter = Counters::where('queue_id', $queue->id)->first();
+        if ($counter) {
+            $counter->status = 'ready';
+            $counter->queue_id = null;
+            $counter->save();
+        }
+
         $queue->status = 'Waiting';
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -66,6 +66,13 @@ class QueueController extends Controller
 
     public function setServing(Queue $queue)
     {
+        $counter = Counters::where('status', 'ready')->first();
+        if ($counter) {
+            $counter->status = 'busy';
+            $counter->queue_id = $queue->id;
+            $counter->save();
+        }
+
         $queue->status = 'Now Serving';
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -73,6 +80,13 @@ class QueueController extends Controller
 
     public function setComplete(Queue $queue)
     {
+        $counter = Counters::where('queue_id', $queue->id)->first();
+        if ($counter) {
+            $counter->status = 'ready';
+            $counter->queue_id = null;
+            $counter->save();
+        }
+
         $queue->status = 'Completed';
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -80,6 +94,13 @@ class QueueController extends Controller
 
     public function setCancelled(Queue $queue)
     {
+        $counter = Counters::where('queue_id', $queue->id)->first();
+        if ($counter) {
+            $counter->status = 'ready';
+            $counter->queue_id = null;
+            $counter->save();
+        }
+
         $queue->status = 'Cancelled';
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' has been Cancelled');

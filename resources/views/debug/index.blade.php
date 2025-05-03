@@ -43,8 +43,6 @@
                 <strong>Queue Status:</strong> <span class="text-gray-500">{{ $queue->status }}</span><br>
               @endif
               <strong>Service Type:</strong> {{ $queue->service->name }}<br>
-              <strong>Service Description:</strong> {{ $queue->service->description }}<br>
-              <strong>Counter:</strong> {{ $queue->counter_id }}<br>
             </div>
 
             <div class="flex flex-col">

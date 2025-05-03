@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CounterController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -49,6 +50,7 @@ Route::get('/PrintQueue', function () {
 
 Route::get('/debug', [QueueController::class, 'showAll'])->name('debug.index');
 Route::get('/debug/form', [QueueController::class, 'create'])->name('debug.form');
+Route::get('/debug/display', [CounterController::class, 'display'])->name('debug.display');
 
 Route::patch('/queues/{queue}/wait', [QueueController::class, 'setWaiting'])->name('queues.wait');
 Route::patch('/queues/{queue}/serve', [QueueController::class, 'setServing'])->name('queues.serve');
