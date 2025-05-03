@@ -31,14 +31,31 @@ class QueueController extends Controller
         return response()->json($queue);
     }
 
-    public function update(Queue $queue)
+    public function setWaiting(Queue $queue)
     {
-        if ($queue->status === 'waiting') {
-            $queue->status = 'serving';
-        } else {
-            $queue->status = 'completed';
-        }
+        $queue->status = 'Waiting';
         $queue->save();
-        return response()->json($queue);
+        return back()->with('success', 'Updated to ' . $queue->status);
+    }
+
+    public function setServing(Queue $queue)
+    {
+        $queue->status = 'Now Serving';
+        $queue->save();
+        return back()->with('success', 'Updated to ' . $queue->status);
+    }
+
+    public function setComplete(Queue $queue)
+    {
+        $queue->status = 'Completed';
+        $queue->save();
+        return back()->with('success', 'Updated to ' . $queue->status);
+    }
+
+    public function setCancelled(Queue $queue)
+    {
+        $queue->status = 'Cancelled';
+        $queue->save();
+        return back()->with('success', 'Queue No: ' . $queue->queue_number . ' has been cancelled.');
     }
 }

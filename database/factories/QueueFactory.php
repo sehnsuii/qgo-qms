@@ -23,7 +23,7 @@ class QueueFactory extends Factory
         return [
             'customer_type' => $this->faker->randomElement(['Priority', 'Regular']),
             'service_id' => Services::inRandomOrder()->first()->id,
-            'status' => $this->faker->randomElement(['Waiting', 'Now Serving', 'Done', 'Cancelled']),
+            'status' => $this->faker->randomElement(['Waiting', 'Now Serving', 'Completed', 'Cancelled']),
             'counter_id' => Counters::inRandomOrder()->first()->id,
         ];
     }
