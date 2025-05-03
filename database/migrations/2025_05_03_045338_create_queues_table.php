@@ -16,8 +16,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('queue_number');
             $table->enum('customer_type', ['Priority', 'Regular']);
-            // $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
-            $table->enum('status', ['Waiting', 'Served', 'Completed', 'Cancelled'])->default('Waiting');
+            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+            $table->enum('status', ['Waiting', 'Now Serving', 'Done', 'Cancelled'])->default('Waiting');
             $table->foreignId('counter_id')->nullable()->constrained('counters')->onDelete('set null')->default(null);
             $table->timestamps();
         });

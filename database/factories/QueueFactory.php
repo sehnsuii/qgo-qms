@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Queue;
 use App\Models\Counters;
+use App\Models\Services;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Queue>
@@ -19,12 +20,10 @@ class QueueFactory extends Factory
     protected $model = Queue::class;
     public function definition(): array
     {
-        $customerTypes = ['Priority', 'Regular'];
-
         return [
-            'customer_type' => $this->faker->randomElement($customerTypes),
-            // 'service_id' => null,
-            'status' => $this->faker->randomElement(['Waiting', 'Served', 'Completed', 'Cancelled']),
+            'customer_type' => $this->faker->randomElement(['Priority', 'Regular']),
+            'service_id' => Services::inRandomOrder()->first()->id,
+            'status' => $this->faker->randomElement(['Waiting', 'Now Serving', 'Done', 'Cancelled']),
             'counter_id' => Counters::inRandomOrder()->first()->id,
         ];
     }
