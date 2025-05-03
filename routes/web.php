@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\QueuingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,8 +47,6 @@ Route::get('/PrintQueue', function () {
     return Inertia::render('PrintQueue');
 });
 
-Route::get('/debug', function () {
-    return view('debug.index');
-});
+Route::get('/debug', [QueueController::class, 'showAll'])->name('debug.index');
 
 require __DIR__ . '/auth.php';
