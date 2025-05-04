@@ -29,19 +29,22 @@
     @foreach ($queues as $queue)
       <li class='list-none'>
         <div class="border p-4 rounded shadow-sm">
-
-
           <div class='flex flex-row align-center justify-between'>
+
             <div>
               <strong>Created At:</strong> {{ $queue->created_at }}<br>
-              <strong>Updated At:</strong> {{ $queue->updated_at }}<br>
+              @if ($queue->customer_type == 'Priority')
+                <strong>Customer Type:</strong> <span class="text-red-500">{{ $queue->customer_type }}</span><br>
+              @elseif ($queue->customer_type == 'Regular')
+                <strong>Customer Type:</strong> <span class="text-green-500">{{ $queue->customer_type }}</span><br>
+              @endif
               <strong>Queue Number:</strong> {{ $queue->queue_number }}<br>
               @if ($queue->status == 'Waiting')
                 <strong>Queue Status:</strong> <span class="text-yellow-500">{{ $queue->status }}</span><br>
               @elseif ($queue->status == 'Now Serving')
-                <strong>Queue Status:</strong> <span class="text-green-500">{{ $queue->status }}</span><br>
+                <strong>Queue Status:</strong> <span class="text-amber-500">{{ $queue->status }}</span><br>
               @elseif ($queue->status == 'Completed')
-                <strong>Queue Status:</strong> <span class="text-blue-500">{{ $queue->status }}</span><br>
+                <strong>Queue Status:</strong> <span class="text-orange-500">{{ $queue->status }}</span><br>
               @elseif ($queue->status == 'Cancelled')
                 <strong>Queue Status:</strong> <span class="text-gray-500">{{ $queue->status }}</span><br>
               @endif
@@ -53,7 +56,7 @@
                 <form method="POST" action="{{ route('queue.wait', $queue) }}">
                   @csrf
                   @method('PATCH')
-                  <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700">
+                  <button type="submit" class="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-700">
                     Change Status to Waiting
                   </button>
                 </form>
@@ -84,6 +87,9 @@
             </div>
           </div>
 
+          <div>
+            <a href="{{ route('queue.print', $queue) }}" class="text-blue-500 hover:underline">Print Queue</a>
+          </div>
 
         </div>
       </li>

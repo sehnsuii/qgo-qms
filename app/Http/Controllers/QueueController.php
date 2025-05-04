@@ -12,8 +12,15 @@ class QueueController extends Controller
 {
     public function display()
     {
-        $queues = Queue::with('counter')->orderBy('created_at', 'desc')->paginate(6);
+        $queues = Queue::with('service')->with('counter')->orderBy('created_at', 'desc')->paginate(6);
         return view('debug.index', ['queues' => $queues]);
+    }
+
+    public function print(Queue $queue)
+    {
+        $queue->load('service');
+        $queue->load('counter');
+        return view('debug.print', ['queue' => $queue]);
     }
 
     public function create()
