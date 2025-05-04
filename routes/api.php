@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\QueueController;
+use App\Http\Controllers\ServicesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,3 +36,6 @@ Route::get('/counters/{counter}', [CounterController::class, 'showApi']);
 Route::patch('/counters/{counter}/wait', [CounterController::class, 'setWaitingApi']);
 Route::patch('/counters/{counter}/complete', [CounterController::class, 'setCompletedApi']);
 Route::patch('/counters/{counter}/cancel', [CounterController::class, 'setCancelledApi']);
+
+// Services API Route
+Route::get('/services', [ServicesController::class, 'index']);
