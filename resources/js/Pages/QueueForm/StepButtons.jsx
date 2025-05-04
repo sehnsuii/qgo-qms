@@ -3,12 +3,12 @@ import SecondaryButton from '@/Components/SecondaryButton';
 
 const StepButtons = ({ onPrevStep, onNextStep, prevDisabled = false, nextDisabled = false, nextLabel = 'Continue', showPrev = true, showNext = true, isSubmitting = false }) => {
   return (
-    <div className='flex justify-center gap-6 mt-10'>
+    <div className='mt-10 flex justify-center gap-6'>
       {showPrev && (
         <SecondaryButton
           onClick={onPrevStep}
           disabled={prevDisabled || isSubmitting}
-          className='w-48 h-12 text-lg font-bold justify-center'
+          className='h-12 w-48 justify-center text-lg font-bold'
         >
           Back
         </SecondaryButton>
@@ -17,7 +17,7 @@ const StepButtons = ({ onPrevStep, onNextStep, prevDisabled = false, nextDisable
         <PrimaryButton
           onClick={onNextStep}
           disabled={nextDisabled || isSubmitting}
-          className={`w-48 h-12 text-lg font-bold justify-center ${nextDisabled || isSubmitting ? 'cursor-not-allowed' : ''}`}
+          className={`h-12 w-48 justify-center text-lg font-bold ${nextDisabled || isSubmitting ? 'cursor-not-allowed' : ''}`}
         >
           {isSubmitting ? 'Processing...' : nextLabel}
         </PrimaryButton>

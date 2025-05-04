@@ -36,8 +36,8 @@ const ServiceTypeStep = ({ formData, services, loadingServices, submitting, onSe
               <SecondaryButton
                 key={service.id}
                 onClick={() => onSelect('serviceId', service.id)}
-                className={`h-40 flex flex-col items-center justify-center gap-3 rounded-lg p-8 text-lg font-bold shadow-md transition-all duration-300 ${
-                  formData.serviceId === service.id ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white border-transparent' : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-100'
+                className={`flex h-40 flex-col items-center justify-center gap-3 rounded-lg p-8 text-lg font-bold shadow-md transition-all duration-300 ${
+                  formData.serviceId === service.id ? 'border-transparent bg-gradient-to-br from-emerald-400 to-teal-500 text-white' : 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-100'
                 } ${services.length % 2 !== 0 && index === services.length - 1 ? 'md:col-span-2' : ''}`}
               >
                 <IconComponent className='text-5xl' />
