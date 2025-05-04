@@ -113,9 +113,16 @@ class QueueController extends Controller
      *
      * @return JsonResponse
      */
-    public function indexApi(): JsonResponse
+    public function indexApi(Request $request): JsonResponse
     {
-        $queues = Queue::with('service', 'counter')->orderBy('created_at', 'desc')->paginate(15);
+        $query = Queue::with('service', 'counter')->orderBy('created_at', 'desc');
+        if ($request->has('status')) {
+            $statuses = explode(',', $request->query('status'));
+            if (!empty($statuses)) {
+                $query->whereIn('status', $statuses);
+            }
+        }
+        $queues = $query->paginate(15);
         return response()->json($queues);
     }
 
