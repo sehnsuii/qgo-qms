@@ -289,6 +289,13 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                                 </div>
 
                                 <button
+                                    onClick={prevStep}
+                                    className="px-10 py-4 bg-gray-200 text-gray-800 rounded-lg text-lg font-bold shadow-md hover:bg-gray-300"
+                                >
+                                    Back
+                                </button>
+
+                                <button
                                     onClick={nextStep}
                                     disabled={!formData.customerType}
                                     className={`mt-6 px-10 py-4 rounded-lg text-lg font-bold shadow-md transition-colors
