@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Counters;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,26 +25,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/Welcome', function () {
-    return Inertia::render('Welcome');
-});
+Route::get('/counter/{id}', function ($id) {
+    if (!Counters::find($id)) {
+        abort(404, 'Counter not found.');
+    }
+    return Inertia::render('Counter', [
+        'counterId' => $id
+    ]);
+})->name('counter.show');
+
 Route::get('/QueueDisplay', function () {
     return Inertia::render('QueueDisplay');
-});
-Route::get('/FormWizard', function () {
-    return Inertia::render('FormWizard');
-});
-Route::get('/CustomerSelection', function () {
-    return Inertia::render('CustomerSelection');
-});
-Route::get('/ServiceSelection', function () {
-    return Inertia::render('ServiceSelection');
-});
-Route::get('/DetailSummary', function () {
-    return Inertia::render('DetailSummary');
-});
-Route::get('/PrintQueue', function () {
-    return Inertia::render('PrintQueue');
 });
 
 require __DIR__ . '/auth.php';
