@@ -1,0 +1,16 @@
+node_modules/
+vendor/
+public/
+storage/
+bootstrap/
+.vscode/
+.github/
+.git/
+.env
+.env.*
+*.lock
+composer.json
+composer.lock
+package*.json
+resources/views/
+database/migrations/
