@@ -164,24 +164,24 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
   return (
     <>
       <Head title='Customer Selection' />
-      <div className='min-h-screen flex flex-col bg-gray-50 text-black/50 dark:bg-black dark:text-white/50'>
+      <div className='flex min-h-screen flex-col bg-gray-50 text-black/50 dark:bg-black dark:text-white/50'>
         <img
-          className='absolute inset-0 w-full h-full object-cover'
+          className='absolute inset-0 h-full w-full object-cover'
           src='https://upload.wikimedia.org/wikipedia/commons/a/ad/6346Poblacion_City_Hall_San_Pedro_Laguna_27.jpg'
           alt='San Pedro Laguna City Hall'
         />
 
-        <header className='relative w-full bg-white shadow-md py-4 flex items-center px-6'>
-          <div className='flex items-center w-1/3'>
+        <header className='relative flex w-full items-center bg-white px-6 py-4 shadow-md'>
+          <div className='flex w-1/3 items-center'>
             <img
               src='https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png'
               alt='SP Logo'
-              className='h-12 mr-4'
+              className='mr-4 h-12'
             />
             <h1 className='text-xl font-semibold text-black'>City of San Pedro Laguna</h1>
           </div>
 
-          <div className='flex-1 flex justify-center'>
+          <div className='flex flex-1 justify-center'>
             <img
               src='https://i.pinimg.com/736x/b0/1d/a1/b01da1459e9c98b05f0458aeecc6a87f.jpg'
               alt='QGo Logo'
@@ -189,7 +189,7 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
             />
           </div>
 
-          <nav className='w-1/3 flex justify-end items-center'>
+          <nav className='flex w-1/3 items-center justify-end'>
             {auth.user ? (
               <NavLink
                 href={route('dashboard')}
@@ -219,22 +219,21 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
           </nav>
         </header>
 
-        <div className='relative flex flex-1 w-full items-center justify-center'>
-          <div className='bg-white bg-opacity-90 p-10 rounded-3xl shadow-lg w-[800px] min-h-[510px] flex flex-col items-center justify-center'>
+        <div className='relative flex w-full flex-1 items-center justify-center'>
+          <div className='flex min-h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-white bg-opacity-90 p-10 shadow-lg'>
             {/* Progress Indicator */}
-            <div className='w-full mb-8'>
+            <div className='mb-8 w-full'>
               <div className='flex items-center'>
                 {[1, 2, 3].map((stepNumber) => (
                   <React.Fragment key={stepNumber}>
                     <div className={`flex flex-col items-center ${step >= stepNumber ? 'text-green-600' : 'text-gray-400'}`}>
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center 
-                                                ${step >= stepNumber ? 'bg-green-100 border-2 border-green-600' : 'bg-gray-100 border-2 border-gray-300'}`}
+                        className={`flex h-10 w-10 items-center justify-center rounded-full ${step >= stepNumber ? 'border-2 border-green-600 bg-green-100' : 'border-2 border-gray-300 bg-gray-100'}`}
                       >
                         {stepNumber}
                       </div>
                     </div>
-                    {stepNumber < 3 && <div className={`flex-1 h-1 mx-2 ${step > stepNumber ? 'bg-green-600' : 'bg-gray-200'}`}></div>}
+                    {stepNumber < 3 && <div className={`mx-2 h-1 flex-1 ${step > stepNumber ? 'bg-green-600' : 'bg-gray-200'}`}></div>}
                   </React.Fragment>
                 ))}
               </div>
@@ -242,13 +241,13 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
 
             {/* Step 1: Welcome Screen */}
             {step === 1 && (
-              <div className='relative flex flex-1 w-full items-center justify-center'>
-                <div className='bg-green-600 p-10 rounded-3xl shadow-lg w-[800px] h-[510px] flex flex-col items-center justify-center'>
-                  <h2 className='text-7xl font-bold text-white mb-8 font-[Verdana]'>Welcome</h2>
-                  <h2 className='text-2xl font-semibold text-white mb-8 '>to</h2>
-                  <h2 className='text-4xl font-semibold text-white mb-8 '>City of San Pedro Laguna</h2>
-                  <hr className='w-4/5 border-2 border-white my-4 mx-auto' />
-                  <p className='text-xl font-small text-white mb-5 font-[Verdana]'>Please get your queue here</p>
+              <div className='relative flex w-full flex-1 items-center justify-center'>
+                <div className='flex h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-green-600 p-10 shadow-lg'>
+                  <h2 className='mb-8 font-[Verdana] text-7xl font-bold text-white'>Welcome</h2>
+                  <h2 className='mb-8 text-2xl font-semibold text-white'>to</h2>
+                  <h2 className='mb-8 text-4xl font-semibold text-white'>City of San Pedro Laguna</h2>
+                  <hr className='mx-auto my-4 w-4/5 border-2 border-white' />
+                  <p className='font-small mb-5 font-[Verdana] text-xl text-white'>Please get your queue here</p>
 
                   <PrimaryButton
                     onClick={nextStep}
@@ -263,14 +262,14 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
             {/* Step 2: Customer Type Selection */}
             {step === 2 && (
               <div className='w-full text-center'>
-                <h2 className='text-3xl font-bold text-gray-800 mb-6'>Select Customer Type</h2>
-                <p className='text-lg text-gray-600 mb-8'>Are you a priority or regular customer?</p>
+                <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Customer Type</h2>
+                <p className='mb-8 text-lg text-gray-600'>Are you a priority or regular customer?</p>
 
-                <div className='flex justify-center gap-8 mb-10'>
+                <div className='mb-10 flex justify-center gap-8'>
                   <SecondaryButton
                     onClick={() => handleSelect('customerType', 'Priority')}
                     className={`px-8 py-12 text-xl font-bold transition-all duration-200 ${
-                      formData.customerType === 'Priority' ? 'bg-yellow-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                      formData.customerType === 'Priority' ? 'scale-105 transform bg-yellow-600 text-white hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
                     }`}
                   >
                     Priority Customer
@@ -279,7 +278,7 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                   <SecondaryButton
                     onClick={() => handleSelect('customerType', 'Regular')}
                     className={`px-8 py-12 text-xl font-bold transition-all duration-200 ${
-                      formData.customerType === 'Regular' ? 'bg-blue-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                      formData.customerType === 'Regular' ? 'scale-105 transform bg-blue-600 text-white hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
                     }`}
                   >
                     Regular Customer
@@ -307,10 +306,10 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
             {/* Step 3: Appointment Type Selection */}
             {step === 3 && (
               <div className='w-full text-center'>
-                <h2 className='text-3xl font-bold text-gray-800 mb-6'>Select Service</h2>
-                <p className='text-lg text-gray-600 mb-8'>What type of service do you need?</p>
+                <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Service</h2>
+                <p className='mb-8 text-lg text-gray-600'>What type of service do you need?</p>
 
-                <div className='grid grid-cols-2 gap-6 mb-10'>
+                <div className='mb-10 grid grid-cols-2 gap-6'>
                   {loadingServices ? (
                     <p>Loading services...</p>
                   ) : services.length > 0 ? (
@@ -319,7 +318,7 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                         key={service.id}
                         onClick={() => handleSelect('serviceId', service.id)}
                         className={`p-6 text-lg font-bold transition-all duration-200 ${
-                          formData.serviceId === service.id ? 'bg-green-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                          formData.serviceId === service.id ? 'scale-105 transform bg-green-600 text-white hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
                         }`}
                       >
                         {service.name}
@@ -351,7 +350,7 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
           </div>
         </div>
 
-        <footer className='relative w-full bg-white shadow-md py-4 text-center text-sm text-black mt-auto'>
+        <footer className='relative mt-auto w-full bg-white py-4 text-center text-sm text-black shadow-md'>
           QGo {laravelVersion} (PHP v{phpVersion})
         </footer>
       </div>

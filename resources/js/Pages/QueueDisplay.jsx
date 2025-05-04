@@ -68,18 +68,18 @@ const QueueDisplay = () => {
   return (
     <div className='min-h-screen bg-gray-100 p-4'>
       {/* Header */}
-      <div className='bg-blue-800 text-white p-6 rounded-t-lg shadow-md'>
-        <div className='flex justify-between items-center'>
+      <div className='rounded-t-lg bg-blue-800 p-6 text-white shadow-md'>
+        <div className='flex items-center justify-between'>
           <div>
             <img
               src='https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png'
               alt='City Logo'
-              className='h-16 inline-block mr-4'
+              className='mr-4 inline-block h-16'
             />
-            <h1 className='text-4xl font-bold inline-block align-middle'>City of San Pedro Laguna</h1>
+            <h1 className='inline-block align-middle text-4xl font-bold'>City of San Pedro Laguna</h1>
           </div>
           <div className='text-right'>
-            <div className='text-3xl font-mono'>{currentTime.toLocaleTimeString()}</div>
+            <div className='font-mono text-3xl'>{currentTime.toLocaleTimeString()}</div>
             <div className='text-xl'>
               {currentTime.toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -93,18 +93,18 @@ const QueueDisplay = () => {
       </div>
 
       {/* Main Display - Add relative positioning and transition */}
-      <div className={`bg-white p-6 rounded-b-lg shadow-lg relative transition-opacity duration-150 ${isUpdating ? 'opacity-75' : 'opacity-100'}`}>
+      <div className={`relative rounded-b-lg bg-white p-6 shadow-lg transition-opacity duration-150 ${isUpdating ? 'opacity-75' : 'opacity-100'}`}>
         {/* Optional: Small updating indicator */}
-        {isUpdating && !loading && <div className='absolute top-2 right-2 text-xs text-gray-400 animate-pulse'>Updating...</div>}
+        {isUpdating && !loading && <div className='absolute right-2 top-2 animate-pulse text-xs text-gray-400'>Updating...</div>}
 
         {loading ? ( // Only shows on initial load now
-          <div className='text-center py-16'>
-            <div className='inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500'></div>
+          <div className='py-16 text-center'>
+            <div className='inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-500'></div>
             <p className='mt-4 text-lg'>Loading display data...</p>
           </div>
         ) : error ? (
           <div
-            className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'
+            className='relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700'
             role='alert'
           >
             <strong className='font-bold'>Error:</strong>
@@ -113,34 +113,34 @@ const QueueDisplay = () => {
         ) : (
           <div className='flex gap-6'>
             {/* Counters Section */}
-            <div className='w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            <div className='grid w-2/3 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
               {counters.map((counter) => {
                 const servingQueue = counter.queue; // Queue is directly loaded onto counter object
                 return (
                   <div
                     key={counter.id}
-                    className='bg-gray-50 p-6 rounded-lg border-2 border-blue-200 flex flex-col'
+                    className='flex flex-col rounded-lg border-2 border-blue-200 bg-gray-50 p-6'
                   >
-                    <div className='text-center mb-4'>
-                      <div className='bg-blue-600 text-white text-2xl font-bold py-2 px-6 rounded-full inline-block'>
+                    <div className='mb-4 text-center'>
+                      <div className='inline-block rounded-full bg-blue-600 px-6 py-2 text-2xl font-bold text-white'>
                         Counter {counter.id} {/* Display Counter ID */}
                       </div>
                     </div>
-                    <div className='flex-grow flex flex-col items-center justify-center'>
+                    <div className='flex flex-grow flex-col items-center justify-center'>
                       {servingQueue ? (
                         <>
-                          <div className='text-center text-gray-600 mb-2 text-sm'>NOW SERVING</div>
-                          <div className='bg-red-600 text-white text-5xl font-bold text-center py-4 px-2 rounded-lg w-full animate-pulse mb-2'>{servingQueue.queue_number}</div>
+                          <div className='mb-2 text-center text-sm text-gray-600'>NOW SERVING</div>
+                          <div className='mb-2 w-full animate-pulse rounded-lg bg-red-600 px-2 py-4 text-center text-5xl font-bold text-white'>{servingQueue.queue_number}</div>
                           <div
-                            className='text-lg text-center font-medium truncate w-full'
+                            className='w-full truncate text-center text-lg font-medium'
                             title={servingQueue.service?.name}
                           >
                             {servingQueue.service?.name}
                           </div>
-                          <div className='text-xs text-center text-gray-500'>({servingQueue.customer_type})</div>
+                          <div className='text-center text-xs text-gray-500'>({servingQueue.customer_type})</div>
                         </>
                       ) : (
-                        <div className='text-center text-gray-400 text-xl italic'>Available</div>
+                        <div className='text-center text-xl italic text-gray-400'>Available</div>
                       )}
                     </div>
                   </div>
@@ -149,8 +149,8 @@ const QueueDisplay = () => {
             </div>
 
             {/* Waiting List Section */}
-            <div className='w-1/3 bg-gray-50 p-6 rounded-lg border-2 border-gray-200'>
-              <h3 className='text-2xl font-bold text-center mb-4 text-gray-700'>Waiting</h3>
+            <div className='w-1/3 rounded-lg border-2 border-gray-200 bg-gray-50 p-6'>
+              <h3 className='mb-4 text-center text-2xl font-bold text-gray-700'>Waiting</h3>
               <div className='space-y-3'>
                 {waitingQueues.length > 0 ? (
                   waitingQueues.slice(0, 10).map(
@@ -160,11 +160,11 @@ const QueueDisplay = () => {
                     ) => (
                       <div
                         key={queue.id}
-                        className={`p-3 rounded-lg text-center ${index === 0 ? 'bg-yellow-100 border border-yellow-300' : 'bg-gray-100'}`}
+                        className={`rounded-lg p-3 text-center ${index === 0 ? 'border border-yellow-300 bg-yellow-100' : 'bg-gray-100'}`}
                       >
                         <div className='text-2xl font-bold text-gray-800'>{queue.queue_number}</div>
                         <div
-                          className='text-xs text-gray-600 mt-1 truncate'
+                          className='mt-1 truncate text-xs text-gray-600'
                           title={`${queue.customer_type} - ${queue.service?.name}`}
                         >
                           {queue.customer_type} - {queue.service?.name}
@@ -173,7 +173,7 @@ const QueueDisplay = () => {
                     ),
                   )
                 ) : (
-                  <p className='text-center text-gray-500 italic'>No customers waiting.</p>
+                  <p className='text-center italic text-gray-500'>No customers waiting.</p>
                 )}
               </div>
             </div>
@@ -182,7 +182,7 @@ const QueueDisplay = () => {
       </div>
 
       {/* Footer */}
-      <div className='mt-6 text-center text-gray-600 text-sm'>
+      <div className='mt-6 text-center text-sm text-gray-600'>
         <p>Please wait for your number to be called. Thank you for your patience.</p>
         <p className='mt-2'>© {new Date().getFullYear()} City of San Pedro Laguna - Queue Management System</p>
       </div>

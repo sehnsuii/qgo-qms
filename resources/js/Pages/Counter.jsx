@@ -179,8 +179,8 @@ export default function Counter({ counterId }) {
         <div className='mx-auto max-w-3xl sm:px-6 lg:px-8'>
           <div className='overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg'>
             {isLoading ? (
-              <div className='text-center py-10'>
-                <div className='inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500'></div>
+              <div className='py-10 text-center'>
+                <div className='inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500'></div>
                 <p className='mt-3 text-sm text-gray-600'>Loading counter information...</p>
               </div>
             ) : error ? (
@@ -213,7 +213,7 @@ export default function Counter({ counterId }) {
                   )}
                 </div>
 
-                <h3 className='text-lg font-medium leading-6 text-gray-900 mb-4'>Current Queue</h3>
+                <h3 className='mb-4 text-lg font-medium leading-6 text-gray-900'>Current Queue</h3>
                 {currentQueue ? (
                   <div className='rounded-md border border-gray-300 bg-gray-50 p-4'>
                     <p className='text-2xl font-bold text-blue-600'>{currentQueue.queue_number}</p>
@@ -247,7 +247,7 @@ export default function Counter({ counterId }) {
                     </div>
                   </div>
                 ) : (
-                  <div className='text-center text-gray-500 py-6'>
+                  <div className='py-6 text-center text-gray-500'>
                     <p>No customer currently assigned to this counter.</p>
                     {/* Show Call Next only if 'ready' */}
                     {counterStatus === 'ready' && (
@@ -267,7 +267,7 @@ export default function Counter({ counterId }) {
                 )}
               </div>
             )}
-            {isUpdating && !isLoading && <p className='mt-4 text-sm text-gray-500 animate-pulse'>Processing request...</p>}
+            {isUpdating && !isLoading && <p className='mt-4 animate-pulse text-sm text-gray-500'>Processing request...</p>}
           </div>
         </div>
       </main>
