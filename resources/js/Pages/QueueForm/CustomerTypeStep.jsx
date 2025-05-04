@@ -15,8 +15,8 @@ const CustomerTypeStep = ({ formData, onSelect, onNextStep, onPrevStep }) => {
       <div className='mb-10 flex justify-center gap-8'>
         <SecondaryButton
           onClick={() => onSelect('customerType', 'Priority')}
-          className={`w-96 h-48 px-12 py-10 text-xl font-bold transition-all duration-300 rounded-lg shadow-md flex flex-col items-center justify-center gap-4 ${
-            formData.customerType === 'Priority' ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white border-transparent' : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-100'
+          className={`flex h-48 w-96 flex-col items-center justify-center gap-4 rounded-lg px-12 py-10 text-xl font-bold shadow-md transition-all duration-300 ${
+            formData.customerType === 'Priority' ? 'border-transparent bg-gradient-to-br from-amber-400 to-orange-500 text-white' : 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-100'
           }`}
         >
           <div className='flex gap-3 text-7xl'>
@@ -29,8 +29,8 @@ const CustomerTypeStep = ({ formData, onSelect, onNextStep, onPrevStep }) => {
 
         <SecondaryButton
           onClick={() => onSelect('customerType', 'Regular')}
-          className={`w-96 h-48 px-12 py-10 text-xl font-bold transition-all duration-300 rounded-lg shadow-md flex flex-col items-center justify-center gap-4 ${
-            formData.customerType === 'Regular' ? 'bg-gradient-to-br from-sky-400 to-cyan-500 text-white border-transparent' : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-100'
+          className={`flex h-48 w-96 flex-col items-center justify-center gap-4 rounded-lg px-12 py-10 text-xl font-bold shadow-md transition-all duration-300 ${
+            formData.customerType === 'Regular' ? 'border-transparent bg-gradient-to-br from-sky-400 to-cyan-500 text-white' : 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-100'
           }`}
         >
           <div className='text-7xl'>

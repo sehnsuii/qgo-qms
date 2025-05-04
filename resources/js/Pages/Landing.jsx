@@ -211,7 +211,7 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
 
       <div className='relative flex w-full flex-1 items-center justify-center'>
         <div className='flex min-h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-white bg-opacity-90 p-10 shadow-lg'>
-          {step > 1 && <StepIndicator currentStep={step} />}
+          {<StepIndicator currentStep={step} />}
           {renderStep()}
         </div>
       </div>
