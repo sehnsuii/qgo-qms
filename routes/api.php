@@ -33,9 +33,8 @@ Route::patch('/queues/{queue}/cancel', [QueueController::class, 'setCancelledApi
 // Counter API Routes
 Route::get('/counters', [CounterController::class, 'indexApi']);
 Route::get('/counters/{counter}', [CounterController::class, 'showApi']);
-Route::patch('/counters/{counter}/wait', [CounterController::class, 'setWaitingApi']);
-Route::patch('/counters/{counter}/complete', [CounterController::class, 'setCompletedApi']);
-Route::patch('/counters/{counter}/cancel', [CounterController::class, 'setCancelledApi']);
+Route::patch('/counters/{counter}/status', [CounterController::class, 'updateStatusApi']);
+Route::post('/counters/{counter}/call-next', [CounterController::class, 'callNextQueueApi']);
 
 // Services API Route
 Route::get('/services', [ServicesController::class, 'index']);
