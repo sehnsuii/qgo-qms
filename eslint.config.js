@@ -20,10 +20,27 @@ export default defineConfig([
       '*.blade.php',
     ],
   },
-  { settings: { react: { version: 'detect' } } },
-  { files: ['**/*.{js,mjs,cjs,jsx}'], plugins: { js }, extends: ['js/recommended'] },
-  { files: ['**/*.{js,mjs,cjs,jsx}'], languageOptions: { globals: globals.browser } },
+  {
+    settings: { react: { version: 'detect' } },
+  },
+  {
+    files: ['**/*.{js,mjs,cjs,jsx}'],
+    plugins: { js },
+    extends: ['js/recommended'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
   pluginReact.configs.flat.recommended,
   eslintConfigPrettier,
   eslintPluginPrettier,
+  {
+    files: ['**/*.{js,mjs,cjs,jsx}'],
+    rules: {
+      'react/no-unescaped-entities': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'no-undef': 'off',
+    },
+  },
 ]);
