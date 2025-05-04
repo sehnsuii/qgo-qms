@@ -1,9 +1,11 @@
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { Head } from '@inertiajs/react';
 
 const CustomerTypeStep = ({ formData, onSelect, onNextStep, onPrevStep }) => {
   return (
     <div className='w-full text-center'>
+      <Head title='Customer Type' />
       <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Customer Type</h2>
       <p className='mb-8 text-lg text-gray-600'>Are you a priority or regular customer?</p>
 

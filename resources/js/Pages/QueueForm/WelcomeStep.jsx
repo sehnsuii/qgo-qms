@@ -1,8 +1,10 @@
 import PrimaryButton from '@/Components/PrimaryButton';
+import { Head } from '@inertiajs/react';
 
 const WelcomeStep = ({ onNextStep }) => {
   return (
     <div className='relative flex w-full flex-1 items-center justify-center'>
+      <Head title='Welcome!' />
       <div className='flex h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-green-600 p-10 shadow-lg'>
         <h2 className='mb-8 font-[Verdana] text-7xl font-bold text-white'>Welcome</h2>
         <h2 className='mb-8 text-2xl font-semibold text-white'>to</h2>

@@ -1,9 +1,11 @@
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { Head } from '@inertiajs/react';
 
 const ServiceTypeStep = ({ formData, services, loadingServices, submitting, onSelect, onSubmit, onPrevStep }) => {
   return (
     <div className='w-full text-center'>
+      <Head title='Service Type' />
       <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Service</h2>
       <p className='mb-8 text-lg text-gray-600'>What type of service do you need?</p>
 

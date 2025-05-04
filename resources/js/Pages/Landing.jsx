@@ -1,5 +1,4 @@
 import NavLink from '@/Components/NavLink';
-import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
@@ -157,77 +156,73 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
   };
 
   return (
-    <>
-      <Head title='Customer Selection' />
-      {/* Main layout structure remains */}
-      <div className='flex min-h-screen flex-col bg-gray-50 text-black/50 dark:bg-black dark:text-white/50'>
-        <img
-          className='absolute inset-0 h-full w-full object-cover'
-          src='https://upload.wikimedia.org/wikipedia/commons/a/ad/6346Poblacion_City_Hall_San_Pedro_Laguna_27.jpg'
-          alt='San Pedro Laguna City Hall'
-        />
+    <div className='flex min-h-screen flex-col bg-gray-50 text-black/50 dark:bg-black dark:text-white/50'>
+      <img
+        className='absolute inset-0 h-full w-full object-cover'
+        src='https://upload.wikimedia.org/wikipedia/commons/a/ad/6346Poblacion_City_Hall_San_Pedro_Laguna_27.jpg'
+        alt='San Pedro Laguna City Hall'
+      />
 
-        <header className='relative flex w-full items-center bg-white px-6 py-4 shadow-md'>
-          <div className='flex w-1/3 items-center'>
-            <img
-              src='https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png'
-              alt='SP Logo'
-              className='mr-4 h-12'
-            />
-            <h1 className='text-xl font-semibold text-black'>City of San Pedro Laguna</h1>
-          </div>
-          <div className='flex flex-1 justify-center'>
-            <img
-              src='https://i.pinimg.com/736x/b0/1d/a1/b01da1459e9c98b05f0458aeecc6a87f.jpg'
-              alt='QGo Logo'
-              className='h-16'
-            />
-          </div>
-          <nav className='flex w-1/3 items-center justify-end'>
-            {auth.user ? (
-              <NavLink
-                href={route('dashboard')}
-                className='text-black hover:text-gray-700'
-                active={route().current('dashboard')}
-              >
-                Dashboard
-              </NavLink>
-            ) : (
-              <>
-                <NavLink
-                  href={route('login')}
-                  className='mr-4 text-black hover:text-gray-700'
-                  active={route().current('login')}
-                >
-                  Log in
-                </NavLink>
-                <NavLink
-                  href={route('register')}
-                  className='text-black hover:text-gray-700'
-                  active={route().current('register')}
-                >
-                  Register
-                </NavLink>
-              </>
-            )}
-          </nav>
-        </header>
-
-        <div className='relative flex w-full flex-1 items-center justify-center'>
-          <div className='flex min-h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-white bg-opacity-90 p-10 shadow-lg'>
-            {/* Use StepIndicator component */}
-            {step > 1 && <StepIndicator currentStep={step} />}
-
-            {/* Render the current step component */}
-            {renderStep()}
-          </div>
+      <header className='relative flex w-full items-center bg-white px-6 py-4 shadow-md'>
+        <div className='flex w-1/3 items-center'>
+          <img
+            src='https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png'
+            alt='SP Logo'
+            className='mr-4 h-12'
+          />
+          <h1 className='text-xl font-semibold text-black'>City of San Pedro Laguna</h1>
         </div>
+        <div className='flex flex-1 justify-center'>
+          <img
+            src='https://i.pinimg.com/736x/b0/1d/a1/b01da1459e9c98b05f0458aeecc6a87f.jpg'
+            alt='QGo Logo'
+            className='h-16'
+          />
+        </div>
+        <nav className='flex w-1/3 items-center justify-end'>
+          {auth.user ? (
+            <NavLink
+              href={route('dashboard')}
+              className='text-black hover:text-gray-700'
+              active={route().current('dashboard')}
+            >
+              Dashboard
+            </NavLink>
+          ) : (
+            <>
+              <NavLink
+                href={route('login')}
+                className='mr-4 text-black hover:text-gray-700'
+                active={route().current('login')}
+              >
+                Log in
+              </NavLink>
+              <NavLink
+                href={route('register')}
+                className='text-black hover:text-gray-700'
+                active={route().current('register')}
+              >
+                Register
+              </NavLink>
+            </>
+          )}
+        </nav>
+      </header>
 
-        <footer className='relative mt-auto w-full bg-white py-4 text-center text-sm text-black shadow-md'>
-          QGo {laravelVersion} (PHP v{phpVersion})
-        </footer>
+      <div className='relative flex w-full flex-1 items-center justify-center'>
+        <div className='flex min-h-[510px] w-[800px] flex-col items-center justify-center rounded-3xl bg-white bg-opacity-90 p-10 shadow-lg'>
+          {/* Use StepIndicator component */}
+          {step > 1 && <StepIndicator currentStep={step} />}
+
+          {/* Render the current step component */}
+          {renderStep()}
+        </div>
       </div>
-    </>
+
+      <footer className='relative mt-auto w-full bg-white py-4 text-center text-sm text-black shadow-md'>
+        QGo {laravelVersion} (PHP v{phpVersion})
+      </footer>
+    </div>
   );
 };
 
