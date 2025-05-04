@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\CounterController;
-use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -48,22 +46,5 @@ Route::get('/PrintQueue', function () {
     return Inertia::render('PrintQueue');
 });
 
-
-// Form Functions
-Route::get('/debug', [QueueController::class, 'display'])->name('queues.display');
-Route::get('/debug-form', [QueueController::class, 'create'])->name('queues.create');
-Route::post('/queues', [QueueController::class, 'store'])->name('queues.store');
-Route::get('/Q-{queue}', [QueueController::class, 'print'])->name('queue.print');
-Route::patch('/Q-{queue}/wait', [QueueController::class, 'setWaiting'])->name('queue.wait');
-Route::patch('/Q-{queue}/serve', [QueueController::class, 'setServing'])->name('queue.serve');
-Route::patch('/Q-{queue}/complete', [QueueController::class, 'setComplete'])->name('queue.complete');
-Route::patch('/Q-{queue}/cancel', [QueueController::class, 'setCancelled'])->name('queue.cancel');
-
-// Counter Functions
-Route::get('/debug-display', [CounterController::class, 'display'])->name('counters.display');
-Route::get('/C-{counter}', [CounterController::class, 'counter'])->name('counter.show');
-Route::patch('/C-{counter}/wait', [CounterController::class, 'setWaiting'])->name('counter.wait');
-Route::patch('/C-{counter}/complete', [CounterController::class, 'setCompleted'])->name('counter.complete');
-Route::patch('/C-{counter}/cancel', [CounterController::class, 'setCancelled'])->name('counter.cancel');
-
 require __DIR__ . '/auth.php';
+require __DIR__ . '/debug.php';

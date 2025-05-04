@@ -10,20 +10,18 @@ use App\Models\Services;
 
 class QueueController extends Controller
 {
-    public function display()
+    public function displayDebug()
     {
         $queues = Queue::with('service')->with('counter')->orderBy('created_at', 'desc')->paginate(6);
         return view('debug.index', ['queues' => $queues]);
     }
-
-    public function print(Queue $queue)
+    public function printDebug(Queue $queue)
     {
         $queue->load('service');
         $queue->load('counter');
         return view('debug.print', ['queue' => $queue]);
     }
-
-    public function create()
+    public function createDebug()
     {
         $counters = Counters::all();
         $services = Services::all();
@@ -32,8 +30,7 @@ class QueueController extends Controller
             'services' => $services,
         ]);
     }
-
-    public function store(Request $request)
+    public function storeDebug(Request $request)
     {
         $validated = $request->validate([
             'created_at' => 'nullable|date',
@@ -41,8 +38,7 @@ class QueueController extends Controller
             'service_id' => 'required|exists:services,id',
         ]);
 
-        $createdAt = isset($validated->created_at) ? Carbon::parse($validated['created_at']) : now();
-
+        $createdAt = isset($validated['created_at']) ? Carbon::parse($validated['created_at']) : now();
         $lastQueueToday = Queue::whereDate('created_at', $createdAt->toDateString())
             ->where('customer_type', $validated['customer_type'])
             ->latest()
@@ -50,14 +46,12 @@ class QueueController extends Controller
 
         $validated['created_at'] = $createdAt;
         $validated['queue_number'] = $lastQueueToday ? $lastQueueToday->queue_number + 1 : 1;
-
         $validated['status'] = 'Waiting';
 
         Queue::create($validated);
-        return redirect()->route('queues.display')->with('success', 'Queue created successfully.');
+        return redirect()->route('queues.display.debug')->with('success', 'Queue created successfully.');
     }
-
-    public function setWaiting(Queue $queue)
+    public function setWaitingDebug(Queue $queue)
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
@@ -70,8 +64,7 @@ class QueueController extends Controller
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
     }
-
-    public function setServing(Queue $queue)
+    public function setServingDebug(Queue $queue)
     {
         $counter = Counters::where('status', 'ready')->first();
         if ($counter) {
@@ -84,8 +77,7 @@ class QueueController extends Controller
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
     }
-
-    public function setComplete(Queue $queue)
+    public function setCompletedDebug(Queue $queue)
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
@@ -98,8 +90,7 @@ class QueueController extends Controller
         $queue->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
     }
-
-    public function setCancelled(Queue $queue)
+    public function setCancelledDebug(Queue $queue)
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {

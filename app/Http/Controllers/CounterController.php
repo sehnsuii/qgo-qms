@@ -7,19 +7,17 @@ use Illuminate\Http\Request;
 
 class CounterController extends Controller
 {
-    public function display()
+    public function displayDebug()
     {
         $counters = Counters::with('queue')->orderBy('id', 'asc')->get();
         return view('debug.display', ['counters' => $counters]);
     }
-
-    public function counter(Counters $counter)
+    public function showDebug(Counters $counter)
     {
         $counter->load('queue');
         return view('debug.counter', ['counter' => $counter]);
     }
-
-    public function setWaiting(Counters $counter)
+    public function setWaitingDebug(Counters $counter)
     {
         $queue = $counter->queue;
         if ($queue) {
@@ -32,8 +30,7 @@ class CounterController extends Controller
         $counter->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
     }
-
-    public function setCompleted(Counters $counter)
+    public function setCompletedDebug(Counters $counter)
     {
         $queue = $counter->queue;
         if ($queue) {
@@ -46,8 +43,7 @@ class CounterController extends Controller
         $counter->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
     }
-
-    public function setCancelled(Counters $counter)
+    public function setCancelledDebug(Counters $counter)
     {
         $queue = $counter->queue;
         if ($queue) {

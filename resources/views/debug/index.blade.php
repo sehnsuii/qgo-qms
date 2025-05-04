@@ -17,8 +17,8 @@
   @endif
 
   <nav class="flex flex-row gap-4 mb-4">
-    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('queues.create') }}'>Create New Queue</a>
-    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('counters.display') }}' target="_blank">TV Display</a>
+    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('queues.create.debug') }}'>Create New Queue</a>
+    <a class='bg-gray-800 rounded shadow-sm p-4 m-4' href='{{ route('counters.display.debug') }}' target="_blank">TV Display</a>
   </nav>
 
   <div class="mb-4">
@@ -53,14 +53,14 @@
 
             <div class="flex flex-col">
               <div class="flex flex-row gap-2">
-                <form method="POST" action="{{ route('queue.wait', $queue) }}">
+                <form method="POST" action="{{ route('queue.wait.debug', $queue) }}">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-700">
                     Change Status to Waiting
                   </button>
                 </form>
-                <form method="POST" action="{{ route('queue.serve', $queue) }}">
+                <form method="POST" action="{{ route('queue.serve.debug', $queue) }}">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
@@ -69,14 +69,14 @@
                 </form>
               </div>
               <div class="flex flex-row gap-2">
-                <form method="POST" action="{{ route('queue.complete', $queue) }}">
+                <form method="POST" action="{{ route('queue.complete.debug', $queue) }}">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
                     Change Status to Completed
                   </button>
                 </form>
-                <form method="POST" action="{{ route('queue.cancel', $queue) }}">
+                <form method="POST" action="{{ route('queue.cancel.debug', $queue) }}">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">
@@ -88,7 +88,7 @@
           </div>
 
           <div>
-            <a href="{{ route('queue.print', $queue) }}" class="text-blue-500 hover:underline">Print Queue</a>
+            <a href="{{ route('queue.print.debug', $queue) }}" class="text-blue-500 hover:underline">Print Queue</a>
           </div>
 
         </div>

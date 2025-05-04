@@ -8,7 +8,7 @@
 </head>
 
 <body class="p-6">
-  <form method="POST" action="{{ route('queues.store') }}">
+  <form method="POST" action="{{ route('queues.store.debug') }}">
     @csrf
     <div class="mb-4">
       <label for="created_at" class="block mb-2">Created At:</label>
