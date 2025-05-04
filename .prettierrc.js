@@ -5,7 +5,7 @@
  * @type {import("prettier").Config}
  */
 const config = {
-  plugins: ['@prettier/plugin-php', 'prettier-plugin-blade'],
+  plugins: ['@prettier/plugin-php', 'prettier-plugin-blade', 'prettier-plugin-tailwindcss'],
   arrowParens: 'always',
   bracketSameLine: false,
   bracketSpacing: true,
