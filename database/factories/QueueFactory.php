@@ -21,6 +21,7 @@ class QueueFactory extends Factory
     public function definition(): array
     {
         return [
+            'queue_number' => $this->faker->unique()->numberBetween(1, 1000),
             'customer_type' => $this->faker->randomElement(['Priority', 'Regular']),
             'service_id' => Services::inRandomOrder()->first()->id,
             'status' => $this->faker->randomElement(['Waiting', 'Now Serving', 'Completed', 'Cancelled']),
