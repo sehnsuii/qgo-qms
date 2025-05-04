@@ -3,7 +3,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 
 const StepButtons = ({ onPrevStep, onNextStep, prevDisabled = false, nextDisabled = false, nextLabel = 'Continue', showPrev = true, showNext = true, isSubmitting = false }) => {
   return (
-    <div className='mt-10 flex justify-center gap-6'>
+    <div className='mt-10 flex justify-center gap-8'>
       {showPrev && (
         <SecondaryButton
           onClick={onPrevStep}
