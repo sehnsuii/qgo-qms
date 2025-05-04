@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import NavLink from '@/Components/NavLink';
+import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/SecondaryButton';
+import { Head } from '@inertiajs/react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const Welcome = ({ auth, laravelVersion, phpVersion }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    customerType: null, // 'priority' or 'regular'
-    serviceId: null, // Will store the selected service ID
+    customerType: null,
+    serviceId: null,
   });
 
   const [submitting, setSubmitting] = useState(false);
-  const [services, setServices] = useState([]); // Changed from appointmentTypes
-  const [loadingServices, setLoadingServices] = useState(true); // Changed from loadingTypes
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
@@ -24,7 +27,6 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
   };
 
   useEffect(() => {
-    // Fetch services when the component mounts
     const fetchServices = async () => {
       try {
         setLoadingServices(true);
@@ -101,20 +103,17 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form data
     if (!formData.customerType || !formData.serviceId) {
       alert('Please complete all selections');
       return;
     }
 
-    // Prepare payload
     const payload = {
-      customer_type: formData.customerType, // Should be 'Priority' or 'Regular'
-      service_id: formData.serviceId, // Should be the selected service ID
+      customer_type: formData.customerType,
+      service_id: formData.serviceId,
     };
 
     try {
-      // Show loading state (you might want to add this to your component state)
       setSubmitting(true);
 
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -124,7 +123,6 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
       }
 
       const response = await fetch('/api/queues', {
-        // Updated endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,21 +139,18 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
 
       const data = await response.json();
 
-      // Handle successful response
       console.log('Queue created:', data);
 
-      // Show success alert with queue number
       Swal.fire({
         title: 'Queue Generated!',
-        html: `Your queue number is: <b>${data.queue_number}</b>`, // Updated field name
+        html: `Your queue number is: <b>Q-${data.queue_number}</b>`,
         icon: 'success',
         confirmButtonText: 'OK',
         willClose: () => {
-          printQueueTicket(data.queue_number); // Updated field name
+          printQueueTicket(data.queue_number);
         },
       });
 
-      // Optionally reset form or redirect
       setFormData({ customerType: null, serviceId: null });
       setStep(1);
     } catch (error) {
@@ -194,28 +189,31 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
             />
           </div>
 
-          <nav className='w-1/3 flex justify-end'>
+          <nav className='w-1/3 flex justify-end items-center'>
             {auth.user ? (
-              <Link
+              <NavLink
                 href={route('dashboard')}
                 className='text-black hover:text-gray-700'
+                active={route().current('dashboard')}
               >
                 Dashboard
-              </Link>
+              </NavLink>
             ) : (
               <>
-                <Link
+                <NavLink
                   href={route('login')}
                   className='mr-4 text-black hover:text-gray-700'
+                  active={route().current('login')}
                 >
                   Log in
-                </Link>
-                <Link
+                </NavLink>
+                <NavLink
                   href={route('register')}
                   className='text-black hover:text-gray-700'
+                  active={route().current('register')}
                 >
                   Register
-                </Link>
+                </NavLink>
               </>
             )}
           </nav>
@@ -226,28 +224,23 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
             {/* Progress Indicator */}
             <div className='w-full mb-8'>
               <div className='flex items-center'>
-                {[1, 2, 3].map(
-                  (
-                    stepNumber, // Adjusted step count
-                  ) => (
-                    <React.Fragment key={stepNumber}>
-                      <div className={`flex flex-col items-center ${step >= stepNumber ? 'text-green-600' : 'text-gray-400'}`}>
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center 
+                {[1, 2, 3].map((stepNumber) => (
+                  <React.Fragment key={stepNumber}>
+                    <div className={`flex flex-col items-center ${step >= stepNumber ? 'text-green-600' : 'text-gray-400'}`}>
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center 
                                                 ${step >= stepNumber ? 'bg-green-100 border-2 border-green-600' : 'bg-gray-100 border-2 border-gray-300'}`}
-                        >
-                          {stepNumber}
-                        </div>
+                      >
+                        {stepNumber}
                       </div>
-                      {stepNumber < 3 && ( // Adjusted step count
-                        <div className={`flex-1 h-1 mx-2 ${step > stepNumber ? 'bg-green-600' : 'bg-gray-200'}`}></div>
-                      )}
-                    </React.Fragment>
-                  ),
-                )}
+                    </div>
+                    {stepNumber < 3 && <div className={`flex-1 h-1 mx-2 ${step > stepNumber ? 'bg-green-600' : 'bg-gray-200'}`}></div>}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
 
+            {/* Step 1: Welcome Screen */}
             {step === 1 && (
               <div className='relative flex flex-1 w-full items-center justify-center'>
                 <div className='bg-green-600 p-10 rounded-3xl shadow-lg w-[800px] h-[510px] flex flex-col items-center justify-center'>
@@ -257,62 +250,57 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                   <hr className='w-4/5 border-2 border-white my-4 mx-auto' />
                   <p className='text-xl font-small text-white mb-5 font-[Verdana]'>Please get your queue here</p>
 
-                  <button
+                  <PrimaryButton
                     onClick={nextStep}
-                    className='mt-5 px-14 py-5 bg-white text-green-600 text-lg font-bold rounded-lg shadow-md hover:bg-gray-200'
+                    className='mt-5 px-14 py-5 text-lg'
                   >
                     START
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
-            {/* Step 1: Customer Type Selection */}
+
+            {/* Step 2: Customer Type Selection */}
             {step === 2 && (
               <div className='w-full text-center'>
                 <h2 className='text-3xl font-bold text-gray-800 mb-6'>Select Customer Type</h2>
                 <p className='text-lg text-gray-600 mb-8'>Are you a priority or regular customer?</p>
 
                 <div className='flex justify-center gap-8 mb-10'>
-                  <button
-                    onClick={() => handleSelect('customerType', 'Priority')} // Capitalized
-                    className={`px-8 py-12 rounded-xl shadow-md text-xl font-bold transition-all duration-200
-                                            ${
-                                              formData.customerType === 'Priority' // Capitalized
-                                                ? 'bg-green-600 text-white transform scale-105'
-                                                : 'bg-white text-gray-700 hover:bg-gray-100'
-                                            }`}
+                  <SecondaryButton
+                    onClick={() => handleSelect('customerType', 'Priority')}
+                    className={`px-8 py-12 text-xl font-bold transition-all duration-200 ${
+                      formData.customerType === 'Priority' ? 'bg-yellow-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     Priority Customer
-                  </button>
+                  </SecondaryButton>
 
-                  <button
-                    onClick={() => handleSelect('customerType', 'Regular')} // Capitalized
-                    className={`px-8 py-12 rounded-xl shadow-md text-xl font-bold transition-all duration-200
-                                            ${
-                                              formData.customerType === 'Regular' // Capitalized
-                                                ? 'bg-green-600 text-white transform scale-105'
-                                                : 'bg-white text-gray-700 hover:bg-gray-100'
-                                            }`}
+                  <SecondaryButton
+                    onClick={() => handleSelect('customerType', 'Regular')}
+                    className={`px-8 py-12 text-xl font-bold transition-all duration-200 ${
+                      formData.customerType === 'Regular' ? 'bg-blue-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     Regular Customer
-                  </button>
+                  </SecondaryButton>
                 </div>
+                <div className='flex justify-center gap-6'>
+                  <SecondaryButton
+                    onClick={prevStep}
+                    className='px-10 py-4 text-lg font-bold'
+                  >
+                    Back
+                  </SecondaryButton>
 
-                <button
-                  onClick={prevStep}
-                  className='px-10 py-4 bg-gray-200 text-gray-800 rounded-lg text-lg font-bold shadow-md hover:bg-gray-300'
-                >
-                  Back
-                </button>
-
-                <button
-                  onClick={nextStep}
-                  disabled={!formData.customerType}
-                  className={`mt-6 px-10 py-4 rounded-lg text-lg font-bold shadow-md transition-colors
-                                        ${formData.customerType ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                >
-                  Continue
-                </button>
+                  <PrimaryButton
+                    onClick={nextStep}
+                    disabled={!formData.customerType}
+                    className={`ml-4 px-10 py-4 text-lg font-bold ${!formData.customerType ? 'cursor-not-allowed' : ''}`}
+                  >
+                    Continue
+                  </PrimaryButton>
+                </div>
               </div>
             )}
 
@@ -327,18 +315,15 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                     <p>Loading services...</p>
                   ) : services.length > 0 ? (
                     services.map((service) => (
-                      <button
-                        key={service.id} // Use service ID as key
-                        onClick={() => handleSelect('serviceId', service.id)} // Store service ID
-                        className={`p-6 rounded-xl shadow-md text-lg font-bold transition-all duration-200
-                                                    ${
-                                                      formData.serviceId === service.id // Compare with service ID
-                                                        ? 'bg-green-600 text-white transform scale-105'
-                                                        : 'bg-white text-gray-700 hover:bg-gray-100'
-                                                    }`}
+                      <SecondaryButton
+                        key={service.id}
+                        onClick={() => handleSelect('serviceId', service.id)}
+                        className={`p-6 text-lg font-bold transition-all duration-200 ${
+                          formData.serviceId === service.id ? 'bg-green-600 text-white transform scale-105 hover:bg-green-700' : 'bg-white text-gray-700 hover:bg-gray-100'
+                        }`}
                       >
-                        {service.name} {/* Display service name */}
-                      </button>
+                        {service.name}
+                      </SecondaryButton>
                     ))
                   ) : (
                     <p>No services available at this time.</p>
@@ -346,21 +331,20 @@ const Welcome = ({ auth, laravelVersion, phpVersion }) => {
                 </div>
 
                 <div className='flex justify-center gap-6'>
-                  <button
+                  <SecondaryButton
                     onClick={prevStep}
-                    className='px-10 py-4 bg-gray-200 text-gray-800 rounded-lg text-lg font-bold shadow-md hover:bg-gray-300'
+                    className='px-10 py-4 text-lg font-bold'
                   >
                     Back
-                  </button>
+                  </SecondaryButton>
 
-                  <button
+                  <PrimaryButton
                     onClick={handleSubmit}
                     disabled={!formData.serviceId || submitting || loadingServices || services.length === 0}
-                    className={`px-10 py-4 rounded-lg text-lg font-bold shadow-md transition-colors
-                                            ${formData.serviceId ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                    className={`ml-4 px-10 py-4 text-lg font-bold ${!formData.serviceId || services.length === 0 ? 'cursor-not-allowed' : ''}`}
                   >
                     {submitting ? 'Submitting...' : 'Submit'}
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
