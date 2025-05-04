@@ -1,5 +1,5 @@
-import PrimaryButton from '@/Components/PrimaryButton';
-import SecondaryButton from '@/Components/SecondaryButton';
+import SecondaryButton from '@/Components/SecondaryButton'; // Keep SecondaryButton for service selection
+import StepButtons from '@/Pages/QueueForm/StepButtons';
 import { Head } from '@inertiajs/react';
 import { FaBookOpen, FaBriefcaseMedical, FaClock, FaCross, FaFolderOpen, FaQuestionCircle } from 'react-icons/fa';
 
@@ -50,22 +50,13 @@ const ServiceTypeStep = ({ formData, services, loadingServices, submitting, onSe
         )}
       </div>
 
-      <div className='flex justify-center gap-6'>
-        <SecondaryButton
-          onClick={onPrevStep}
-          className='px-10 py-4 text-lg font-bold'
-        >
-          Back
-        </SecondaryButton>
-
-        <PrimaryButton
-          onClick={onSubmit}
-          disabled={!formData.serviceId || submitting || loadingServices || services.length === 0}
-          className={`ml-4 px-10 py-4 text-lg font-bold ${!formData.serviceId || services.length === 0 ? 'cursor-not-allowed' : ''}`}
-        >
-          {submitting ? 'Submitting...' : 'Submit'}
-        </PrimaryButton>
-      </div>
+      <StepButtons
+        onPrevStep={onPrevStep}
+        onNextStep={onSubmit} // Use onSubmit for the next step action
+        nextDisabled={!formData.serviceId || loadingServices || services.length === 0}
+        nextLabel='Submit'
+        isSubmitting={submitting}
+      />
     </div>
   );
 };

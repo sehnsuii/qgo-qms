@@ -1,5 +1,5 @@
-import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import StepButtons from '@/Pages/QueueForm/StepButtons';
 import { Head } from '@inertiajs/react';
 import { FaUsers, FaWheelchair } from 'react-icons/fa';
 import { FaPersonCane } from 'react-icons/fa6';
@@ -39,22 +39,11 @@ const CustomerTypeStep = ({ formData, onSelect, onNextStep, onPrevStep }) => {
           <span>Regular</span>
         </SecondaryButton>
       </div>
-      <div className='flex justify-center gap-6'>
-        <SecondaryButton
-          onClick={onPrevStep}
-          className='px-10 py-4 text-lg font-bold'
-        >
-          Back
-        </SecondaryButton>
-
-        <PrimaryButton
-          onClick={onNextStep}
-          disabled={!formData.customerType}
-          className={`ml-4 px-10 py-4 text-lg font-bold ${!formData.customerType ? 'cursor-not-allowed' : ''}`}
-        >
-          Continue
-        </PrimaryButton>
-      </div>
+      <StepButtons
+        onPrevStep={onPrevStep}
+        onNextStep={onNextStep}
+        nextDisabled={!formData.customerType}
+      />
     </div>
   );
 };
