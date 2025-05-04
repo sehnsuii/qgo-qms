@@ -14,7 +14,7 @@ const StepIndicator = ({ currentStep }) => {
             <React.Fragment key={step}>
               <div className={`flex flex-col items-center ${isCompleted ? 'text-emerald-600' : isActive ? 'text-emerald-600' : 'text-gray-400'}`}>
                 <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-2 text-2xl font-semibold ${
+                  className={`text-1xl flex h-12 w-12 items-center justify-center rounded-full border-2 font-semibold ${
                     isCompleted ? 'border-emerald-600 bg-emerald-100' : isActive ? 'border-emerald-600 bg-emerald-100' : 'border-gray-300 bg-gray-100'
                   }`}
                 >

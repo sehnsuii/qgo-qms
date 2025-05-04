@@ -9,10 +9,10 @@ const CustomerTypeStep = ({ formData, onSelect, onNextStep, onPrevStep }) => {
   return (
     <div className='w-full text-center'>
       <Head title='Customer Type' />
-      <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Customer Type</h2>
-      <p className='mb-8 text-lg text-gray-600'>Are you a priority or regular customer?</p>
+      <h2 className='text-3xl font-bold text-gray-800'>Select Customer Type</h2>
+      <p className='text-lg text-gray-600'>Are you a priority or regular customer?</p>
 
-      <div className='mb-10 flex justify-center gap-8'>
+      <div className='mt-10 flex justify-center gap-8'>
         <SecondaryButton
           onClick={() => onSelect('customerType', 'Priority')}
           className={`flex h-48 w-96 flex-col items-center justify-center gap-4 rounded-lg px-12 py-10 text-xl font-bold shadow-md transition-all duration-300 ${

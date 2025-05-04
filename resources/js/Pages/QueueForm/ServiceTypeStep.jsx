@@ -23,10 +23,10 @@ const ServiceTypeStep = ({ formData, services, loadingServices, submitting, onSe
   return (
     <div className='w-full text-center'>
       <Head title='Service Type' />
-      <h2 className='mb-6 text-3xl font-bold text-gray-800'>Select Service</h2>
-      <p className='mb-8 text-lg text-gray-600'>What type of service do you need?</p>
+      <h2 className='text-3xl font-bold text-gray-800'>Select Service</h2>
+      <p className='text-lg text-gray-600'>What type of service do you need?</p>
 
-      <div className='mb-10 grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <div className='mt-10 grid grid-cols-1 gap-6 md:grid-cols-2'>
         {loadingServices ? (
           <p className='col-span-full text-center text-gray-500'>Loading services...</p>
         ) : services.length > 0 ? (
