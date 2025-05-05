@@ -180,7 +180,7 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
         {renderStep()}
       </div>
       {lastGeneratedTicket && (
-        <div className='hidden'> 
+        <div className='hidden'>
           <QueueTicket
             ref={ticketRef}
             queueNumber={lastGeneratedTicket.queue_number}

@@ -9,17 +9,13 @@ import Swal from 'sweetalert2';
 export default function Counter({ auth, counterId }) {
   const [counterStatus, setCounterStatus] = useState('Not Ready');
   const [currentQueue, setCurrentQueue] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
     if (!counterId) {
       setError('Counter ID not assigned to this user.');
-      setIsLoading(false);
       return;
     }
-    if (!currentQueue && !error) setIsLoading(true);
     setError(null);
     try {
       const response = await fetch(`/api/counters/${counterId}`);
@@ -40,14 +36,12 @@ export default function Counter({ auth, counterId }) {
       console.error('Error fetching counter data:', err);
       setError(err.message);
       setCurrentQueue(null);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 15000); // Refresh every 15 seconds
+    const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, [counterId]);
 
@@ -70,7 +64,6 @@ export default function Counter({ auth, counterId }) {
         return;
     }
 
-    setIsUpdating(true);
     try {
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
       const apiUrl = `/api/queues/${queueId}/${endpointSuffix}`;
@@ -78,12 +71,10 @@ export default function Counter({ auth, counterId }) {
       const response = await fetch(apiUrl, {
         method: 'PATCH',
         headers: {
-          // 'Content-Type': 'application/json', // Body is likely not needed for these specific actions
           Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': csrfToken,
         },
-        // body: JSON.stringify({ status: status }) // Body is likely not needed
       });
 
       if (!response.ok) {
@@ -96,8 +87,6 @@ export default function Counter({ auth, counterId }) {
     } catch (err) {
       console.error('Error updating queue status:', err);
       Swal.fire('Error', `Failed to update queue status: ${err.message}`, 'error');
-    } finally {
-      setIsUpdating(false);
     }
   };
 
@@ -106,7 +95,6 @@ export default function Counter({ auth, counterId }) {
       console.warn('Cannot update readiness while busy or without counter ID.');
       return;
     }
-    setIsUpdating(true);
     try {
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
       const response = await fetch(`/api/counters/${counterId}/readiness`, {
@@ -130,14 +118,11 @@ export default function Counter({ auth, counterId }) {
     } catch (err) {
       console.error('Error updating counter readiness:', err);
       Swal.fire('Error', `Failed to update counter readiness: ${err.message}`, 'error');
-    } finally {
-      setIsUpdating(false);
     }
   };
 
   const callNextCustomer = async () => {
     if (!counterId) return;
-    setIsUpdating(true);
     try {
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
       const response = await fetch(`/api/counters/${counterId}/call-next`, {
@@ -164,8 +149,6 @@ export default function Counter({ auth, counterId }) {
       } else {
         Swal.fire('Error', `Failed to call next customer: ${err.message}`, 'error');
       }
-    } finally {
-      setIsUpdating(false);
     }
   };
 
@@ -180,12 +163,7 @@ export default function Counter({ auth, counterId }) {
         <div className='mx-auto max-w-3xl sm:px-6 lg:px-8'>
           <div className='overflow-hidden bg-white shadow-sm sm:rounded-lg'>
             <div className='p-6 text-gray-900'>
-              {isLoading ? (
-                <div className='py-10 text-center'>
-                  <div className='inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500'></div>
-                  <p className='mt-3 text-sm text-gray-600'>Loading counter information...</p>
-                </div>
-              ) : error ? (
+              {error ? (
                 <div className='rounded-md bg-red-50 p-4'>
                   <div className='flex'>
                     <div className='ml-3'>
@@ -200,11 +178,7 @@ export default function Counter({ auth, counterId }) {
                 <div>
                   <div className='mb-6 border-b pb-4'>
                     <h3 className='text-lg font-medium leading-6 text-gray-900'>Counter Status</h3>
-                    <p
-                      className={`mt-1 text-sm font-semibold ${
-                        counterStatus === 'Ready' ? 'text-green-600' : counterStatus === 'Busy' ? 'text-yellow-600' : 'text-gray-500' // Not Ready status color
-                      }`}
-                    >
+                    <p className={`mt-1 text-sm font-semibold ${counterStatus === 'Ready' ? 'text-green-600' : counterStatus === 'Busy' ? 'text-yellow-600' : 'text-gray-500'}`}>
                       Status: {counterStatus}
                     </p>
 
@@ -212,10 +186,10 @@ export default function Counter({ auth, counterId }) {
                       <SecondaryButton
                         className='mt-2'
                         onClick={() => updateReadiness(counterStatus === 'Ready' ? 'Not Ready' : 'Ready')}
-                        disabled={isUpdating}
+                        disabled={counterStatus === 'Busy'} // Only disable if busy
                         title={counterStatus === 'Busy' ? 'Cannot change readiness while serving a customer' : ''}
                       >
-                        {isUpdating ? 'Updating...' : counterStatus === 'Ready' ? 'Set to Not Ready' : 'Set to Ready'}
+                        {counterStatus === 'Ready' ? 'Set to Not Ready' : 'Set to Ready'}
                       </SecondaryButton>
                     )}
                     {counterStatus === 'Busy' && <p className='mt-2 text-sm italic text-yellow-700'>Currently serving a customer.</p>}
@@ -233,21 +207,21 @@ export default function Counter({ auth, counterId }) {
                       <div className='mt-4 flex flex-wrap gap-2'>
                         <PrimaryButton
                           onClick={() => updateQueueStatus(currentQueue.id, 'Completed')}
-                          disabled={isUpdating || currentQueue.status !== 'Now Serving'}
+                          disabled={currentQueue.status !== 'Now Serving'}
                           title={currentQueue.status !== 'Now Serving' ? 'Can only complete queues that are "Now Serving"' : ''}
                         >
                           Mark Completed
                         </PrimaryButton>
                         <SecondaryButton
                           onClick={() => updateQueueStatus(currentQueue.id, 'Waiting')}
-                          disabled={isUpdating || currentQueue.status !== 'Now Serving'}
+                          disabled={currentQueue.status !== 'Now Serving'}
                           title={currentQueue.status !== 'Now Serving' ? 'Can only return queues that are "Now Serving" to waiting' : ''}
                         >
                           Set Back to Waiting
                         </SecondaryButton>
                         <DangerButton
                           onClick={() => updateQueueStatus(currentQueue.id, 'Cancelled')}
-                          disabled={isUpdating || currentQueue.status !== 'Now Serving'}
+                          disabled={currentQueue.status !== 'Now Serving'}
                           title={currentQueue.status !== 'Now Serving' ? 'Can only cancel queues that are "Now Serving"' : ''}
                         >
                           Cancel Queue
@@ -261,9 +235,9 @@ export default function Counter({ auth, counterId }) {
                         <PrimaryButton
                           className='mt-4'
                           onClick={callNextCustomer}
-                          disabled={isUpdating}
+                          // No disabled prop needed here anymore
                         >
-                          {isUpdating ? 'Calling...' : 'Call Next Customer'}
+                          Call Next Customer
                         </PrimaryButton>
                       )}
                       {counterStatus === 'Not Ready' && <p className='mt-4 text-sm italic'>Set status to "Ready" to call the next customer.</p>}
@@ -271,7 +245,6 @@ export default function Counter({ auth, counterId }) {
                   )}
                 </div>
               )}
-              {isUpdating && !isLoading && <p className='mt-4 animate-pulse text-sm text-gray-500'>Processing request...</p>}
             </div>
           </div>
         </div>

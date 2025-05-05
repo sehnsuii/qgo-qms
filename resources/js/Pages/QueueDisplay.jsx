@@ -6,8 +6,6 @@ import WaitingListItem from './QueueDisplay/WaitingListItem';
 const QueueDisplay = () => {
   const [counters, setCounters] = useState([]);
   const [queues, setQueues] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -17,11 +15,6 @@ const QueueDisplay = () => {
     }, 1000);
 
     const fetchData = async () => {
-      if (counters.length === 0 && queues.length === 0) {
-        setLoading(true);
-      } else {
-        setIsUpdating(true);
-      }
       setError(null);
       try {
         const [countersResponse, queuesResponse] = await Promise.all([fetch('/api/counters'), fetch('/api/queues?status=Now Serving,Waiting')]);
@@ -44,14 +37,11 @@ const QueueDisplay = () => {
       } catch (err) {
         console.error('Error fetching display data:', err);
         setError(err.message);
-      } finally {
-        setLoading(false);
-        setTimeout(() => setIsUpdating(false), 150);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 10000); // Poll every 10 seconds
+    const interval = setInterval(fetchData, 1000);
 
     return () => {
       clearInterval(timer);
@@ -63,17 +53,8 @@ const QueueDisplay = () => {
 
   return (
     <QueueDisplayLayout currentTime={currentTime}>
-      <div className={`relative flex min-h-full flex-grow flex-col rounded-xl bg-white p-6 shadow-lg transition-opacity duration-150 ${isUpdating ? 'opacity-75' : 'opacity-100'}`}>
-        {isUpdating && !loading && <div className='absolute right-2 top-2 animate-pulse text-xs text-gray-400'>Updating...</div>}
-
-        {loading ? (
-          <div className='flex h-full items-center justify-center py-16 text-center'>
-            <div>
-              <div className='inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-500'></div>
-              <p className='mt-4 text-lg'>Loading display data...</p>
-            </div>
-          </div>
-        ) : error ? (
+      <div className={`relative flex min-h-full flex-grow flex-col rounded-xl bg-white p-6 shadow-lg`}>
+        {error ? (
           <div
             className='relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700'
             role='alert'

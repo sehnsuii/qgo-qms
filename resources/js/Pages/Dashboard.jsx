@@ -18,12 +18,10 @@ export default function Dashboard() {
   const [stats, setStats] = useState(defaultStats);
   const [queueData, setQueueData] = useState([]);
   const [counterData, setCounterData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       setError(null);
       try {
         const [queuesResponse, countersResponse] = await Promise.all([fetch('/api/queues'), fetch('/api/counters')]);
@@ -35,14 +33,12 @@ export default function Dashboard() {
         const queuesResult = await queuesResponse.json();
         const countersResult = await countersResponse.json();
 
-        // Process queue data for stats calculation first
         const statsDataForCalc = queuesResult.data.map((q) => ({
           id: q.id,
           customer_type: q.customer_type,
           status: q.status,
         }));
 
-        // Map queue data for the table (will be passed down)
         const mappedQueueData = queuesResult.data.map((q) => ({
           id: q.id,
           queue_no: `Q-${String(q.queue_number)}`,
@@ -69,7 +65,6 @@ export default function Dashboard() {
         });
         setCounterData(mappedCounterData);
 
-        // Calculate stats based on fetched queueData (use statsDataForCalc)
         const calculatedStats = statsDataForCalc.reduce(
           (acc, queue) => {
             acc.total += 1;
@@ -86,31 +81,26 @@ export default function Dashboard() {
       } catch (err) {
         setError(err.message);
         console.error('Fetch error:', err);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-    // Optional: Set up polling or WebSocket for real-time updates
-    const intervalId = setInterval(fetchData, 10000); // Fetch every 10 seconds
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, []); // Empty dependency array means this runs once on mount
+    const intervalId = setInterval(fetchData, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <AuthenticatedLayout header={<h2 className='text-xl font-semibold leading-tight text-gray-800'>Admin Dashboard</h2>}>
       <Head title='Dashboard' />
       <div className='py-12'>
         <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
-          {loading && <p>Loading dashboard data...</p>}
-          {error && <p className='text-red-500'>Error loading data: {error}</p>}
-          {!loading && !error && (
-            <>
-              <QueueStats stats={stats} />
-              <CounterTable data={counterData} />
-              <QueueTable data={queueData} />
-            </>
-          )}
+          {error && <p className='rounded bg-red-100 p-4 text-center text-red-700'>Error loading data: {error}</p>}
+
+          <>
+            <QueueStats stats={stats} />
+            <CounterTable data={counterData} />
+            <QueueTable data={queueData} />
+          </>
         </div>
       </div>
     </AuthenticatedLayout>
