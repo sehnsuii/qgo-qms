@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import CounterTable from '@/Pages/Dashboard/CounterTable'; // Import CounterTable
 import QueueStats from '@/Pages/Dashboard/QueueStats';
-import QueueTable from '@/Pages/Dashboard/QueueTable'; // Import QueueTable
+import QueueTable from '@/Pages/Dashboard/QueueTable';
 import { Head } from '@inertiajs/react';
 
 // Placeholder data - replace with actual data fetching later
@@ -27,15 +28,26 @@ const placeholderQueueData = [
   { id: 11, queue_no: 'R007', customer_type: 'Regular', service_type: 'Deposit', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 8).toISOString() },
 ];
 
+// Placeholder counter data
+const placeholderCounters = [
+  { id: 1, status: 'Ready', user_id: 101, user_name: 'Alice', queue_id: null, queue_no: '-' },
+  { id: 2, status: 'Busy', user_id: 102, user_name: 'Bob', queue_id: 1, queue_no: 'P001' },
+  { id: 3, status: 'Offline', user_id: null, user_name: '-', queue_id: null, queue_no: '-' },
+  { id: 4, status: 'NotReady', user_id: 103, user_name: 'Charlie', queue_id: null, queue_no: '-' },
+  { id: 5, status: 'Busy', user_id: 104, user_name: 'David', queue_id: 3, queue_no: 'R002' },
+];
+
 export default function Dashboard() {
   const stats = placeholderStats;
   const queueData = placeholderQueueData;
+  const counterData = placeholderCounters; // Add counter data
 
   return (
     <AuthenticatedLayout header={<h2 className='text-xl font-semibold leading-tight text-gray-800'>Admin Dashboard</h2>}>
       <Head title='Dashboard' />
       <div className='py-12'>
         <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
+          <CounterTable data={counterData} />
           <QueueStats stats={stats} />
           <QueueTable data={queueData} />
         </div>
