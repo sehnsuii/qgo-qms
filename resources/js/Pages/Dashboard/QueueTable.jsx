@@ -1,7 +1,7 @@
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useCallback, useMemo, useState } from 'react';
 import { FaCheck, FaPause, FaPlay, FaSort, FaSortDown, FaSortUp, FaTimes } from 'react-icons/fa';
-import { useFilters, usePagination, useSortBy, useTable } from 'react-table';
+import { usePagination, useSortBy, useTable } from 'react-table';
 
 // Placeholder data - replace with actual props later
 const defaultData = [];
@@ -14,22 +14,6 @@ const updateQueueStatus = async (id, status) => {
   // In a real app, you'd likely refetch data or update local state based on API response
   return true;
 };
-
-// Define a default column filter UI
-function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter } }) {
-  const count = preFilteredRows.length;
-
-  return (
-    <input
-      value={filterValue || ''}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-      }}
-      placeholder={`Search ${count} records...`}
-      className='mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-    />
-  );
-}
 
 const getCustomerTypeStyles = (customerType) => {
   let customerTypeClass = '';
@@ -83,31 +67,27 @@ export default function QueueTable({ data = defaultData }) {
 
   const columns = useMemo(
     () => [
-      { Header: 'ID', accessor: 'id', Filter: DefaultColumnFilter },
-      { Header: 'Queue No.', accessor: 'queue_no', Filter: DefaultColumnFilter },
+      { Header: 'ID', accessor: 'id' },
+      { Header: 'Queue No.', accessor: 'queue_no' },
       {
         Header: 'Customer Type',
         accessor: 'customer_type',
-        Filter: DefaultColumnFilter,
         Cell: ({ value }) => <span className={`${getCustomerTypeStyles(value)}`}>{value}</span>,
       },
-      { Header: 'Service Type', accessor: 'service_type', Filter: DefaultColumnFilter },
+      { Header: 'Service Type', accessor: 'service_type' },
       {
         Header: 'Status',
         accessor: 'status',
-        Filter: DefaultColumnFilter,
         Cell: ({ row }) => <span className={getStatusStyles(row.original.status, row.original.customer_type)}>{row.original.status}</span>,
       },
       {
         Header: 'Timestamp',
         accessor: 'timestamp',
-        Filter: DefaultColumnFilter,
         Cell: ({ value }) => new Date(value).toLocaleString(),
       },
       {
         Header: 'Actions',
         accessor: 'actions',
-        disableFilters: true,
         disableSortBy: true,
         Cell: ({ row }) => {
           const { id, status } = row.original;
@@ -158,13 +138,6 @@ export default function QueueTable({ data = defaultData }) {
     [handleStatusUpdate], // Add handleStatusUpdate as dependency
   );
 
-  const defaultColumn = useMemo(
-    () => ({
-      Filter: DefaultColumnFilter,
-    }),
-    [],
-  );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -184,10 +157,8 @@ export default function QueueTable({ data = defaultData }) {
     {
       columns,
       data: queueData,
-      defaultColumn,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
-    useFilters,
     useSortBy,
     usePagination,
   );
@@ -225,7 +196,6 @@ export default function QueueTable({ data = defaultData }) {
                       )}
                     </span>
                   </div>
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
                 </th>
               ))}
             </tr>

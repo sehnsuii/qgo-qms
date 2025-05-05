@@ -37,10 +37,7 @@ export default function Dashboard() {
       <div className='py-12'>
         <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
           <QueueStats stats={stats} />
-          <QueueTable
-            data={queueData}
-            // key={(id, queue_no, customer_type, service_type, status, timestamp)}
-          />
+          <QueueTable data={queueData} />
         </div>
       </div>
     </AuthenticatedLayout>
