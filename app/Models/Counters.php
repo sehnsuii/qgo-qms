@@ -10,6 +10,7 @@ class Counters extends Model
     protected $fillable = [
         'status',
         'queue_id',
+        'user_id',
     ];
     /** @use HasFactory<\Database\Factories\CountersFactory> */
     use HasFactory;

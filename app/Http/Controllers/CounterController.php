@@ -69,8 +69,8 @@ class CounterController extends Controller
      */
     public function indexApi(): JsonResponse
     {
-        // Reverted: Only load queue relationship
-        $counters = Counters::with('queue')->orderBy('id', 'asc')->get();
+        // Load both queue and user relationships
+        $counters = Counters::with(['queue', 'user'])->orderBy('id', 'asc')->get();
         return response()->json($counters);
     }
 

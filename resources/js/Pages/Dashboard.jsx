@@ -1,55 +1,117 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import CounterTable from '@/Pages/Dashboard/CounterTable'; // Import CounterTable
+import CounterTable from '@/Pages/Dashboard/CounterTable';
 import QueueStats from '@/Pages/Dashboard/QueueStats';
 import QueueTable from '@/Pages/Dashboard/QueueTable';
 import { Head } from '@inertiajs/react';
+import { useEffect, useMemo, useState } from 'react';
 
-// Placeholder data - replace with actual data fetching later
-const placeholderStats = {
-  total: 150,
-  priority: 30,
-  waiting: 80,
-  serving: 15,
-  completed: 20,
-  cancelled: 5,
+const defaultStats = {
+  total: 0,
+  priority: 0,
+  waiting: 0,
+  serving: 0,
+  completed: 0,
+  cancelled: 0,
 };
 
-const placeholderQueueData = [
-  { id: 1, queue_no: 'P001', customer_type: 'Priority', service_type: 'Deposit', status: 'Now Serving', timestamp: new Date().toISOString() },
-  { id: 2, queue_no: 'R001', customer_type: 'Regular', service_type: 'Withdrawal', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 2).toISOString() },
-  { id: 3, queue_no: 'R002', customer_type: 'Regular', service_type: 'Inquiry', status: 'Now Serving', timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString() },
-  { id: 4, queue_no: 'P002', customer_type: 'Priority', service_type: 'New Account', status: 'Completed', timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString() },
-  { id: 5, queue_no: 'R003', customer_type: 'Regular', service_type: 'Bills Payment', status: 'Cancelled', timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
-  { id: 6, queue_no: 'R004', customer_type: 'Regular', service_type: 'Deposit', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 1).toISOString() },
-  { id: 7, queue_no: 'P003', customer_type: 'Priority', service_type: 'Withdrawal', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 3).toISOString() },
-  { id: 8, queue_no: 'R005', customer_type: 'Regular', service_type: 'Inquiry', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 4).toISOString() },
-  { id: 9, queue_no: 'R006', customer_type: 'Regular', service_type: 'New Account', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 6).toISOString() },
-  { id: 10, queue_no: 'P004', customer_type: 'Priority', service_type: 'Bills Payment', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 7).toISOString() },
-  { id: 11, queue_no: 'R007', customer_type: 'Regular', service_type: 'Deposit', status: 'Waiting', timestamp: new Date(Date.now() - 1000 * 60 * 8).toISOString() },
-];
-
-// Placeholder counter data
-const placeholderCounters = [
-  { id: 1, status: 'Ready', user_id: 101, user_name: 'Alice', queue_id: null, queue_no: '-' },
-  { id: 2, status: 'Busy', user_id: 102, user_name: 'Bob', queue_id: 1, queue_no: 'P001' },
-  { id: 3, status: 'Offline', user_id: null, user_name: '-', queue_id: null, queue_no: '-' },
-  { id: 4, status: 'NotReady', user_id: 103, user_name: 'Charlie', queue_id: null, queue_no: '-' },
-  { id: 5, status: 'Busy', user_id: 104, user_name: 'David', queue_id: 3, queue_no: 'R002' },
-];
-
 export default function Dashboard() {
-  const stats = placeholderStats;
-  const queueData = placeholderQueueData;
-  const counterData = placeholderCounters; // Add counter data
+  const [stats, setStats] = useState(defaultStats);
+  const [queueData, setQueueData] = useState([]);
+  const [counterData, setCounterData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [queuesResponse, countersResponse] = await Promise.all([fetch('/api/queues'), fetch('/api/counters')]);
+
+        if (!queuesResponse.ok || !countersResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const queuesResult = await queuesResponse.json();
+        const countersResult = await countersResponse.json();
+
+        setQueueData(queuesResult);
+        const mappedQueueData = queuesResult.data.map((q) => ({
+          id: q.id,
+          queue_no: `Q-${String(q.queue_number)}`,
+          customer_type: q.customer_type,
+          service_type: q.service ? q.service.name : 'N/A',
+          status: q.status,
+          timestamp: q.created_at,
+        }));
+        setQueueData(mappedQueueData);
+
+        const mappedCounterData = countersResult.map((c) => {
+          let formattedQueueNo = '-';
+          if (c.queue) {
+            formattedQueueNo = `Q-${String(c.queue.queue_number)}`;
+          }
+          return {
+            id: c.id,
+            status: c.status,
+            user_id: c.user_id,
+            user_name: c.user ? c.user.name : '-',
+            queue_id: c.queue_id,
+            queue_no: formattedQueueNo,
+          };
+        });
+        setCounterData(mappedCounterData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    // Optional: Set up polling or WebSocket for real-time updates
+    const intervalId = setInterval(fetchData, 10000); // Fetch every 10 seconds
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Calculate stats based on fetched queueData
+  const calculatedStats = useMemo(() => {
+    if (!queueData || queueData.length === 0) {
+      return defaultStats;
+    }
+    return queueData.reduce(
+      (acc, queue) => {
+        acc.total += 1;
+        if (queue.customer_type === 'Priority') acc.priority += 1;
+        if (queue.status === 'Waiting') acc.waiting += 1;
+        if (queue.status === 'Now Serving') acc.serving += 1;
+        if (queue.status === 'Completed') acc.completed += 1;
+        if (queue.status === 'Cancelled') acc.cancelled += 1;
+        return acc;
+      },
+      { ...defaultStats },
+    );
+  }, [queueData]);
+
+  useEffect(() => {
+    setStats(calculatedStats);
+  }, [calculatedStats]);
 
   return (
     <AuthenticatedLayout header={<h2 className='text-xl font-semibold leading-tight text-gray-800'>Admin Dashboard</h2>}>
       <Head title='Dashboard' />
       <div className='py-12'>
         <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
-          <CounterTable data={counterData} />
-          <QueueStats stats={stats} />
-          <QueueTable data={queueData} />
+          {loading && <p>Loading dashboard data...</p>}
+          {error && <p className='text-red-500'>Error loading data: {error}</p>}
+          {!loading && !error && (
+            <>
+              <QueueStats stats={stats} />
+              <CounterTable data={counterData} />
+              <QueueTable data={queueData} />
+            </>
+          )}
         </div>
       </div>
     </AuthenticatedLayout>
