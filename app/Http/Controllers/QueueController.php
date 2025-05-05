@@ -110,20 +110,45 @@ class QueueController extends Controller
     /**
      * Display a paginated list of queues with relations.
      * API Endpoint for dashboard.
+     * Filters by status and date (defaults to today).
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function indexApi(Request $request): JsonResponse
     {
         $query = Queue::with('service', 'counter')->orderBy('created_at', 'desc');
+
+        // Filter by date
+        $filterDate = $request->query('date') ? Carbon::parse($request->query('date')) : Carbon::today();
+        $query->whereDate('created_at', $filterDate->toDateString());
+
+        // Filter by status
         if ($request->has('status')) {
             $statuses = explode(',', $request->query('status'));
             if (!empty($statuses)) {
                 $query->whereIn('status', $statuses);
             }
         }
+
         $queues = $query->paginate(15);
         return response()->json($queues);
+    }
+
+    /**
+     * Get distinct dates for which queues exist.
+     * API Endpoint.
+     *
+     * @return JsonResponse
+     */
+    public function getQueueDatesApi(): JsonResponse
+    {
+        $dates = Queue::selectRaw('DATE(created_at) as date')
+            ->distinct()
+            ->orderBy('date', 'desc')
+            ->pluck('date');
+
+        return response()->json($dates);
     }
 
     /**

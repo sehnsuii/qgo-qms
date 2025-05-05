@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import dayjs from 'dayjs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { usePagination, useSortBy, useTable } from 'react-table';
 import QueueTablePagination from './QueueTablePagination';
@@ -38,7 +39,7 @@ const updateQueueStatus = async (id, status) => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': csrfToken, // Include CSRF token
+        'X-CSRF-TOKEN': csrfToken,
         Accept: 'application/json',
       },
       // body: JSON.stringify({ status }) // Body might not be needed if endpoint implies status
@@ -47,12 +48,10 @@ const updateQueueStatus = async (id, status) => {
     if (!response.ok) {
       const errorData = await response.json();
       console.error(`Failed to update status for queue ${id}:`, response.status, errorData.message || 'Unknown error');
-      // Optionally: Show error message to the user
       return false;
     }
 
     console.log(`Queue ${id} status updated to ${status} successfully.`);
-    // The handleStatusUpdate function will update the local state on success
     return true;
   } catch (error) {
     console.error(`Error updating status for queue ${id}:`, error);
@@ -60,8 +59,67 @@ const updateQueueStatus = async (id, status) => {
   }
 };
 
-export default function QueueTable({ data = defaultData }) {
-  const [queueData, setQueueData] = useState(data);
+export default function QueueTable() {
+  const [queueData, setQueueData] = useState(defaultData);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch available dates on mount
+  useEffect(() => {
+    const fetchDates = async () => {
+      try {
+        const response = await fetch('/api/queues/dates');
+        if (!response.ok) {
+          throw new Error('Failed to fetch dates');
+        }
+        const dates = await response.json();
+        const todayStr = dayjs().format('YYYY-MM-DD');
+        // Ensure today is included and list is sorted descending
+        const updatedDates = [...new Set([todayStr, ...dates])].sort((a, b) => b.localeCompare(a));
+        setAvailableDates(updatedDates);
+      } catch (err) {
+        console.error('Error fetching dates:', err);
+        setAvailableDates([dayjs().format('YYYY-MM-DD')]);
+      }
+    };
+    fetchDates();
+  }, []);
+
+  // Fetch queue data based on selected date
+  useEffect(() => {
+    const fetchQueueData = async () => {
+      if (!selectedDate) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/queues?date=${selectedDate}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch queue data for ${selectedDate}`);
+        }
+        const result = await response.json();
+        const mappedData = result.data.map((q) => ({
+          id: q.id,
+          queue_no: `Q-${String(q.queue_number)}`,
+          customer_type: q.customer_type,
+          service_type: q.service ? q.service.name : 'N/A',
+          status: q.status,
+          timestamp: q.created_at,
+        }));
+        setQueueData(mappedData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching queue data:', err);
+        setQueueData(defaultData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQueueData();
+  }, [selectedDate]);
 
   const handleStatusUpdate = useCallback(async (id, newStatus) => {
     const success = await updateQueueStatus(id, newStatus);
@@ -109,78 +167,121 @@ export default function QueueTable({ data = defaultData }) {
     state: { pageIndex, pageSize },
   } = tableInstance;
 
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
   return (
     <div className='overflow-x-auto rounded-lg bg-white p-6 shadow-sm'>
-      <h3 className='mb-4 text-lg font-semibold text-gray-700'>Today's Queues - {formattedDate}</h3>
-      <table
-        {...getTableProps()}
-        className='min-w-full divide-y divide-gray-200'
-      >
-        <thead className='bg-gray-50'>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              key={headerGroup.getHeaderGroupProps().key}
-              {...headerGroup.getHeaderGroupProps()}
-            >
-              {headerGroup.headers.map((column) => (
-                <th
-                  key={column.id}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                  className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'
-                >
-                  <div className='flex items-center justify-between'>
-                    {column.render('Header')}
-                    <span>
-                      {column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <FaSortDown className='ml-1 inline-block' />
-                        ) : (
-                          <FaSortUp className='ml-1 inline-block' />
-                        )
-                      ) : (
-                        column.canSort && <FaSort className='ml-1 inline-block opacity-30' />
-                      )}
-                    </span>
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody
-          {...getTableBodyProps()}
-          className='divide-y divide-gray-200 bg-white'
-        >
-          {page.map((row) => (
-            <QueueTableRow
-              key={row.id}
-              row={row}
-              prepareRow={prepareRow}
-              handleStatusUpdate={handleStatusUpdate}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className='mb-4 flex items-center justify-between'>
+        <h3 className='text-lg font-semibold text-gray-700'>Queues</h3>
+        <div className='flex items-center'>
+          <label
+            htmlFor='date-select'
+            className='mr-2 text-sm font-medium text-gray-700'
+          >
+            Date:
+          </label>
+          <select
+            id='date-select'
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className='rounded border-gray-300 text-sm shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+            disabled={loading && availableDates.length === 0}
+          >
+            {availableDates.map((date) => (
+              <option
+                key={date}
+                value={date}
+                className={date === dayjs().format('YYYY-MM-DD') ? 'font-bold' : ''}
+              >
+                {dayjs(date).format('MMM D, YYYY')}
+                {date === dayjs().format('YYYY-MM-DD') ? ' (Today)' : ''}
+              </option>
+            ))}
+            {availableDates.length === 0 && <option disabled>Loading dates...</option>}
+          </select>
+        </div>
+      </div>
 
-      <QueueTablePagination
-        gotoPage={gotoPage}
-        previousPage={previousPage}
-        nextPage={nextPage}
-        canPreviousPage={canPreviousPage}
-        canNextPage={canNextPage}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageOptions={pageOptions}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-      />
+      {loading && <p className='py-4 text-center text-gray-500'>Loading queues for {dayjs(selectedDate).format('MMM D, YYYY')}...</p>}
+      {error && <p className='py-4 text-center text-red-500'>Error loading queues: {error}</p>}
+
+      {!loading && !error && (
+        <>
+          <table
+            {...getTableProps()}
+            className='min-w-full divide-y divide-gray-200'
+          >
+            <thead className='bg-gray-50'>
+              {headerGroups.map((headerGroup) => (
+                <tr
+                  key={headerGroup.getHeaderGroupProps().key}
+                  {...headerGroup.getHeaderGroupProps()}
+                >
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      key={column.id}
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'
+                    >
+                      <div className='flex items-center justify-between'>
+                        {column.render('Header')}
+                        <span>
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <FaSortDown className='ml-1 inline-block' />
+                            ) : (
+                              <FaSortUp className='ml-1 inline-block' />
+                            )
+                          ) : (
+                            column.canSort && <FaSort className='ml-1 inline-block opacity-30' />
+                          )}
+                        </span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody
+              {...getTableBodyProps()}
+              className='divide-y divide-gray-200 bg-white'
+            >
+              {page.length > 0 ? (
+                page.map((row) => {
+                  prepareRow(row);
+                  return (
+                    <QueueTableRow
+                      key={row.original.id}
+                      row={row}
+                      prepareRow={prepareRow}
+                      handleStatusUpdate={handleStatusUpdate}
+                    />
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className='px-6 py-4 text-center text-sm text-gray-500'
+                  >
+                    No queues found for {dayjs(selectedDate).format('MMM D, YYYY')}.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <QueueTablePagination
+            gotoPage={gotoPage}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            canPreviousPage={canPreviousPage}
+            canNextPage={canNextPage}
+            pageCount={pageCount}
+            pageIndex={pageIndex}
+            pageOptions={pageOptions}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import CounterTable from '@/Pages/Dashboard/CounterTable';
 import QueueStats from '@/Pages/Dashboard/QueueStats';
 import QueueTable from '@/Pages/Dashboard/QueueTable';
 import { Head } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const defaultStats = {
   total: 0,
@@ -35,7 +35,14 @@ export default function Dashboard() {
         const queuesResult = await queuesResponse.json();
         const countersResult = await countersResponse.json();
 
-        setQueueData(queuesResult);
+        // Process queue data for stats calculation first
+        const statsDataForCalc = queuesResult.data.map((q) => ({
+          id: q.id,
+          customer_type: q.customer_type,
+          status: q.status,
+        }));
+
+        // Map queue data for the table (will be passed down)
         const mappedQueueData = queuesResult.data.map((q) => ({
           id: q.id,
           queue_no: `Q-${String(q.queue_number)}`,
@@ -61,6 +68,21 @@ export default function Dashboard() {
           };
         });
         setCounterData(mappedCounterData);
+
+        // Calculate stats based on fetched queueData (use statsDataForCalc)
+        const calculatedStats = statsDataForCalc.reduce(
+          (acc, queue) => {
+            acc.total += 1;
+            if (queue.customer_type === 'Priority') acc.priority += 1;
+            if (queue.status === 'Waiting') acc.waiting += 1;
+            if (queue.status === 'Now Serving') acc.serving += 1;
+            if (queue.status === 'Completed') acc.completed += 1;
+            if (queue.status === 'Cancelled') acc.cancelled += 1;
+            return acc;
+          },
+          { ...defaultStats },
+        );
+        setStats(calculatedStats);
       } catch (err) {
         setError(err.message);
         console.error('Fetch error:', err);
@@ -74,29 +96,6 @@ export default function Dashboard() {
     const intervalId = setInterval(fetchData, 10000); // Fetch every 10 seconds
     return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, []); // Empty dependency array means this runs once on mount
-
-  // Calculate stats based on fetched queueData
-  const calculatedStats = useMemo(() => {
-    if (!queueData || queueData.length === 0) {
-      return defaultStats;
-    }
-    return queueData.reduce(
-      (acc, queue) => {
-        acc.total += 1;
-        if (queue.customer_type === 'Priority') acc.priority += 1;
-        if (queue.status === 'Waiting') acc.waiting += 1;
-        if (queue.status === 'Now Serving') acc.serving += 1;
-        if (queue.status === 'Completed') acc.completed += 1;
-        if (queue.status === 'Cancelled') acc.cancelled += 1;
-        return acc;
-      },
-      { ...defaultStats },
-    );
-  }, [queueData]);
-
-  useEffect(() => {
-    setStats(calculatedStats);
-  }, [calculatedStats]);
 
   return (
     <AuthenticatedLayout header={<h2 className='text-xl font-semibold leading-tight text-gray-800'>Admin Dashboard</h2>}>

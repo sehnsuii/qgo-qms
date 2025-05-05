@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Queue API Routes
 Route::get('/queues', [QueueController::class, 'indexApi']);
 Route::get('/queues/form-data', [QueueController::class, 'createApi']);
+Route::get('/queues/dates', [QueueController::class, 'getQueueDatesApi']);
 Route::post('/queues', [QueueController::class, 'storeApi']);
 Route::get('/queues/{queue}/print', [QueueController::class, 'printApi']);
 Route::patch('/queues/{queue}/wait', [QueueController::class, 'setWaitingApi']);
