@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { usePagination, useSortBy, useTable } from 'react-table';
-import QueueTablePagination from './QueueTablePagination';
 
 const getStatusStyles = (status) => {
   switch (status) {
@@ -9,7 +8,7 @@ const getStatusStyles = (status) => {
       return 'bg-green-100 text-green-800';
     case 'Busy':
       return 'bg-yellow-100 text-yellow-800';
-    case 'NotReady':
+    case 'Not Ready':
       return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
@@ -35,28 +34,13 @@ export default function CounterTable({ data = placeholderCounters }) {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 5 },
+      initialState: { pageIndex: 0, pageSize: 6 },
     },
     useSortBy,
     usePagination,
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
-  } = tableInstance;
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, page } = tableInstance;
 
   return (
     <div className='mb-6 overflow-x-auto rounded-lg bg-white p-6 shadow-sm'>
@@ -122,19 +106,6 @@ export default function CounterTable({ data = placeholderCounters }) {
           })}
         </tbody>
       </table>
-
-      <QueueTablePagination
-        gotoPage={gotoPage}
-        previousPage={previousPage}
-        nextPage={nextPage}
-        canPreviousPage={canPreviousPage}
-        canNextPage={canNextPage}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageOptions={pageOptions}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-      />
     </div>
   );
 }
