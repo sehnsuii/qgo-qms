@@ -21,10 +21,16 @@ class QueueSeeder extends Seeder
         while ($queuesCreated < $totalQueues) {
             $queuesToday = rand(1, min(10, $totalQueues - $queuesCreated));
             for ($i = 1; $i <= $queuesToday; $i++) {
+                $randomHour = rand(8, 17);
+                $randomMinute = rand(0, 59);
+                $randomSecond = rand(0, 59);
+                
+                $randomTime = $currentDate->copy()->setTime($randomHour, $randomMinute, $randomSecond);
+                
                 Queue::factory()->create([
                     'queue_number' => $i,
-                    'created_at' => $currentDate->copy(),
-                    'updated_at' => $currentDate->copy(),
+                    'created_at' => $randomTime,
+                    'updated_at' => $randomTime,
                 ]);
             }
 
