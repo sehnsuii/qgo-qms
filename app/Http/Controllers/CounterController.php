@@ -88,18 +88,18 @@ class CounterController extends Controller
     }
 
     /**
-     * Update the readiness status of the specified counter (Toggle Ready/NotReady).
+     * Update the readiness status of the specified counter (Toggle Ready/Not Ready).
      * API Endpoint.
      * Renamed from updateStatusApi to updateReadinessApi for clarity.
      *
      * @param Counters $counter
-     * @param Request $request // Request should contain the desired state ('Ready' or 'NotReady')
+     * @param Request $request // Request should contain the desired state ('Ready' or 'Not Ready')
      * @return JsonResponse
      */
     public function updateReadinessApi(Counters $counter, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:Ready,NotReady',
+            'status' => 'required|string|in:Ready,Not Ready',
         ]);
 
         $newStatus = $validated['status'];

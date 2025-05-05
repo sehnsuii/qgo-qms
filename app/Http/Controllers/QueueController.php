@@ -67,7 +67,7 @@ class QueueController extends Controller
     }
     public function setServingDebug(Queue $queue)
     {
-        $counter = Counters::where('status', 'ready')->first();
+        $counter = Counters::where('status', 'Ready')->first();
         if ($counter) {
             $counter->status = 'Busy';
             $counter->queue_id = $queue->id;
@@ -219,9 +219,9 @@ class QueueController extends Controller
      */
     public function setServingApi(Queue $queue): JsonResponse
     {
-        $counter = Counters::where('status', 'ready')->first();
+        $counter = Counters::where('status', 'Ready')->first();
         if ($counter) {
-            $counter->status = 'busy';
+            $counter->status = 'Busy';
             $counter->queue_id = $queue->id;
             $counter->save();
         } else {

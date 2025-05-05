@@ -82,7 +82,7 @@ class AuthenticatedSessionController extends Controller
 
             if ($counterToAssign->user_id !== $user->id) {
                 $counterToAssign->user_id = $user->id;
-                $counterToAssign->status = 'NotReady';
+                $counterToAssign->status = 'Not Ready';
                 $counterToAssign->save();
                 Log::info("User {$user->id} assigned to Counter {$counterToAssign->id} via counter login.");
             }
@@ -116,7 +116,7 @@ class AuthenticatedSessionController extends Controller
 
                 if ($assignedCounter) {
                     $assignedCounter->user_id = null;
-                    $assignedCounter->status = 'NotReady';
+                    $assignedCounter->status = 'Not Ready';
                     $assignedCounter->queue_id = null;
                     $assignedCounter->save();
                     Log::info("Counter {$assignedCounter->id} unassigned from User {$user->id} during logout.");

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 export default function Counter({ auth, counterId }) {
-  const [counterStatus, setCounterStatus] = useState('NotReady');
+  const [counterStatus, setCounterStatus] = useState('Not Ready');
   const [currentQueue, setCurrentQueue] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -35,7 +35,7 @@ export default function Counter({ auth, counterId }) {
       }
       const data = await response.json();
       setCurrentQueue(data.queue);
-      setCounterStatus(data.status || 'NotReady');
+      setCounterStatus(data.status || 'Not Ready');
     } catch (err) {
       console.error('Error fetching counter data:', err);
       setError(err.message);
@@ -202,7 +202,7 @@ export default function Counter({ auth, counterId }) {
                     <h3 className='text-lg font-medium leading-6 text-gray-900'>Counter Status</h3>
                     <p
                       className={`mt-1 text-sm font-semibold ${
-                        counterStatus === 'Ready' ? 'text-green-600' : counterStatus === 'Busy' ? 'text-yellow-600' : 'text-gray-500' // NotReady status color
+                        counterStatus === 'Ready' ? 'text-green-600' : counterStatus === 'Busy' ? 'text-yellow-600' : 'text-gray-500' // Not Ready status color
                       }`}
                     >
                       Status: {counterStatus}
@@ -211,7 +211,7 @@ export default function Counter({ auth, counterId }) {
                     {counterStatus !== 'Busy' && (
                       <SecondaryButton
                         className='mt-2'
-                        onClick={() => updateReadiness(counterStatus === 'Ready' ? 'NotReady' : 'Ready')}
+                        onClick={() => updateReadiness(counterStatus === 'Ready' ? 'Not Ready' : 'Ready')}
                         disabled={isUpdating}
                         title={counterStatus === 'Busy' ? 'Cannot change readiness while serving a customer' : ''}
                       >
@@ -266,7 +266,7 @@ export default function Counter({ auth, counterId }) {
                           {isUpdating ? 'Calling...' : 'Call Next Customer'}
                         </PrimaryButton>
                       )}
-                      {counterStatus === 'NotReady' && <p className='mt-4 text-sm italic'>Set status to "Ready" to call the next customer.</p>}
+                      {counterStatus === 'Not Ready' && <p className='mt-4 text-sm italic'>Set status to "Ready" to call the next customer.</p>}
                     </div>
                   )}
                 </div>

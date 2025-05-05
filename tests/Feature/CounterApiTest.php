@@ -90,7 +90,7 @@ class CounterApiTest extends TestCase
         // Arrange: Create a service, queue, and a counter linked to the queue
         Services::factory()->create();
         $queue = Queue::factory()->create(['status' => 'Now Serving']); // Or any status other than Waiting
-        $counter = Counters::factory()->create(['status' => 'busy', 'queue_id' => $queue->id]);
+        $counter = Counters::factory()->create(['status' => 'Busy', 'queue_id' => $queue->id]);
 
         // Act: Send PATCH request
         $response = $this->patchJson("/api/counters/{$counter->id}/wait");
@@ -100,14 +100,14 @@ class CounterApiTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'id' => $counter->id,
-                'status' => 'ready', // Counter should be ready
+                'status' => 'Ready', // Counter should be ready
                 'queue_id' => null,   // Counter should be unlinked
             ]);
 
         // Assert: Check database state
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready',
+            'status' => 'Ready',
             'queue_id' => null,
         ]);
         $this->assertDatabaseHas('queues', [ // Check side effect on queue
@@ -127,7 +127,7 @@ class CounterApiTest extends TestCase
         // Arrange: Create a service, queue, and a counter linked to the queue
         Services::factory()->create();
         $queue = Queue::factory()->create(['status' => 'Now Serving']); // Or any status other than Completed
-        $counter = Counters::factory()->create(['status' => 'busy', 'queue_id' => $queue->id]);
+        $counter = Counters::factory()->create(['status' => 'Busy', 'queue_id' => $queue->id]);
 
         // Act: Send PATCH request
         $response = $this->patchJson("/api/counters/{$counter->id}/complete");
@@ -137,14 +137,14 @@ class CounterApiTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'id' => $counter->id,
-                'status' => 'ready', // Counter should be ready
+                'status' => 'Ready', // Counter should be ready
                 'queue_id' => null,   // Counter should be unlinked
             ]);
 
         // Assert: Check database state
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready',
+            'status' => 'Ready',
             'queue_id' => null,
         ]);
         $this->assertDatabaseHas('queues', [ // Check side effect on queue
@@ -164,7 +164,7 @@ class CounterApiTest extends TestCase
         // Arrange: Create a service, queue, and a counter linked to the queue
         Services::factory()->create();
         $queue = Queue::factory()->create(['status' => 'Now Serving']); // Or any status other than Cancelled
-        $counter = Counters::factory()->create(['status' => 'busy', 'queue_id' => $queue->id]);
+        $counter = Counters::factory()->create(['status' => 'Busy', 'queue_id' => $queue->id]);
 
         // Act: Send PATCH request
         $response = $this->patchJson("/api/counters/{$counter->id}/cancel");
@@ -174,14 +174,14 @@ class CounterApiTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'id' => $counter->id,
-                'status' => 'ready', // Counter should be ready
+                'status' => 'Ready', // Counter should be ready
                 'queue_id' => null,   // Counter should be unlinked
             ]);
 
         // Assert: Check database state
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready',
+            'status' => 'Ready',
             'queue_id' => null,
         ]);
         $this->assertDatabaseHas('queues', [ // Check side effect on queue

@@ -70,7 +70,7 @@ class QueueApiTest extends TestCase
         // Arrange: Create a service, a queue and a ready counter
         Services::factory()->create(); // Ensure a service exists for the QueueFactory
         $queue = Queue::factory()->create(['status' => 'Waiting']);
-        $counter = Counters::factory()->create(['status' => 'ready', 'queue_id' => null]); // Ensure a counter is available
+        $counter = Counters::factory()->create(['status' => 'Ready', 'queue_id' => null]); // Ensure a counter is available
 
         // Act: Send PATCH request to the specific queue's 'serve' endpoint
         $response = $this->patchJson("/api/queues/{$queue->id}/serve");
@@ -92,7 +92,7 @@ class QueueApiTest extends TestCase
         // Assert: Check if the counter was updated (side effect)
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'busy',
+            'status' => 'Busy',
             'queue_id' => $queue->id,
         ]);
     }
@@ -107,7 +107,7 @@ class QueueApiTest extends TestCase
     {
         // Arrange: Create a service, a counter, and a queue being served
         Services::factory()->create(); // Ensure a service exists for the QueueFactory
-        $counter = Counters::factory()->create(['status' => 'busy']);
+        $counter = Counters::factory()->create(['status' => 'Busy']);
         $queue = Queue::factory()->create([
             'status' => 'Now Serving',
             // If your Queue model has a counter_id relationship:
@@ -137,7 +137,7 @@ class QueueApiTest extends TestCase
         // Assert: Check if the counter was reset (side effect)
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready', // Should be reset
+            'status' => 'Ready', // Should be reset
             'queue_id' => null,   // Should be reset
         ]);
     }
@@ -251,7 +251,7 @@ class QueueApiTest extends TestCase
     {
         // Arrange: Create a service, a counter serving a queue
         Services::factory()->create();
-        $counter = Counters::factory()->create(['status' => 'busy']);
+        $counter = Counters::factory()->create(['status' => 'Busy']);
         $queue = Queue::factory()->create(['status' => 'Now Serving']);
         $counter->update(['queue_id' => $queue->id]); // Link them
 
@@ -274,7 +274,7 @@ class QueueApiTest extends TestCase
         // Assert: Check counter side effect
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready',
+            'status' => 'Ready',
             'queue_id' => null,
         ]);
     }
@@ -289,7 +289,7 @@ class QueueApiTest extends TestCase
     {
         // Arrange: Create a service, a counter, and a queue (can be waiting or serving)
         Services::factory()->create();
-        $counter = Counters::factory()->create(['status' => 'busy']);
+        $counter = Counters::factory()->create(['status' => 'Busy']);
         $queue = Queue::factory()->create(['status' => 'Now Serving']);
         $counter->update(['queue_id' => $queue->id]); // Link them
 
@@ -312,7 +312,7 @@ class QueueApiTest extends TestCase
         // Assert: Check counter side effect (should also be reset)
         $this->assertDatabaseHas('counters', [
             'id' => $counter->id,
-            'status' => 'ready',
+            'status' => 'Ready',
             'queue_id' => null,
         ]);
     }

@@ -14,11 +14,11 @@
         <strong>Counter</strong>{{ $counter->id }}
         <br>
         <strong>Counter is</strong>
-        @if ($counter->status == 'ready')
+        @if ($counter->status == 'Ready')
           <span class="text-green-500">{{ $counter->status }}</span>
-        @elseif ($counter->status == 'busy')
+        @elseif ($counter->status == 'Busy')
           <span class="text-blue-500">{{ $counter->status }}</span>
-        @elseif ($counter->status == 'offline')
+        @elseif ($counter->status == 'Offline')
           <span class="text-gray-500">{{ $counter->status }}</span>
         @endif
         <br>
