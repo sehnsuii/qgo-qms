@@ -150,12 +150,21 @@ class CounterController extends Controller
             return response()->json(['message' => 'Counter is not ready.'], 409); // Conflict
         }
 
-        // Get the next queue for the counter
+        // First try to get a priority customer
         $nextQueue = Queue::where('status', 'Waiting')
-            // ->where('service_id', $counter->service_id) // We can lock the counter to only serve a specific service
-            ->where('customer_type', 'Priority') // We prioritize Priority customers
+            ->where('customer_type', 'Priority')
+            ->whereDate('created_at', today())
             ->orderBy('created_at', 'asc')
             ->first();
+            
+        // If no priority customer is waiting, get a regular customer
+        if (!$nextQueue) {
+            $nextQueue = Queue::where('status', 'Waiting')
+            ->where('customer_type', 'Regular')
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'asc')
+            ->first();
+        }
 
         if (!$nextQueue) {
             return response()->json(['message' => 'No waiting queues available.'], 404); // Not Found
