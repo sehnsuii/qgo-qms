@@ -47,9 +47,54 @@ This guide assumes you have a local development environment that provides PHP, a
 7.  **Serve the application:**
     Use your local development server (like Laravel Herd or `php artisan serve`) to access the application in your browser.
 
-## Architecture Overview
+## Architectural Diagram
 
 This application follows a modern web architecture leveraging Laravel for the backend and React with Inertia.js for the frontend.
+```mermaid
+graph TD
+    subgraph Frontend
+        direction TB
+        User["🧑‍💻 User (Browser)"] --> ReactPages["⚛️ React Pages (resources/js/Pages)"]
+        ReactPages --> Tailwind["🎨 Tailwind CSS"]
+        ReactPages --> Inertia["🔗 Inertia.js"]
+        Vite["⚡ Vite Dev Server"] --> ReactPages
+        User --> Vite
+    end
+
+    subgraph Backend
+        direction TB
+        Inertia --> LaravelRoutes["🛣️ Laravel Routes (web.php)"]
+        LaravelRoutes --> LaravelControllers["🧠 Controllers (app/Http/Controllers)"]
+        LaravelControllers --> Eloquent["📦 Eloquent ORM"]
+        Eloquent --> Database["🗄️ SQLite DB (artisan-built)"]
+        LaravelControllers --> Inertia
+
+        APIRoutes["🔌 API Routes (api.php)"] --> APIControllers["📡 API Controllers"]
+        APIControllers --> Eloquent
+        APIControllers --> ReactPages
+
+        DebugRoutes["🧪 Debug Routes (debug.php)"] --> DebugControllers["🛠️ Debug Controllers"]
+        DebugControllers --> BladeViews["🧾 Blade Views (resources/views/debug)"]
+    end
+
+    subgraph Tooling
+        direction TB
+        ESLint["🧹 ESLint (eslint.config.js)"] --> ReactPages
+        Prettier["🧼 Prettier (.prettierrc.js)"] --> ReactPages
+        Prettier --> PHPFiles["📄 PHP Files"]
+        Prettier --> BladeViews
+        Composer["🎼 Composer"] --> PHPPackages["📦 PHP Dependencies"]
+        NPM["📦 NPM"] --> JSPackages["📦 JS Dependencies"]
+    end
+
+    ReactPages --> APIRoutes
+
+    style Frontend fill:#f9f,stroke:#333,stroke-width:2px
+    style Backend fill:#ccf,stroke:#333,stroke-width:2px
+    style Tooling fill:#cfc,stroke:#333,stroke-width:2px
+```
+
+## Architecture Overview
 
 *   **Backend (Laravel):**
     *   Handles routing (`routes/web.php`, `routes/api.php`), database interactions (Eloquent ORM), authentication, and business logic.
@@ -84,6 +129,19 @@ This project utilizes several open-source packages. Notable mentions include:
 *   **[Day.js](https://day.js.org/)**: For date and time formatting.
 
 Thanks to the creators and maintainers of these and all other dependencies listed in `package.json` and `composer.json`.
+
+### Development Environment & Tooling
+
+Development was aided by Visual Studio Code and the following extensions:
+
+*   **ESLint**: Integrates ESLint into VS Code.
+*   **GitHub Copilot + Chat**: AI pair programmer and chat assistant.
+*   **Laravel**: Provides Laravel-specific snippets and utilities.
+*   **Laravel Blade Snippets**: Adds Blade syntax highlighting and snippets.
+*   **PostCSS Language Support**: Adds PostCSS syntax highlighting.
+*   **Roo Code**: AI coding assistant (that's me!).
+*   **SQLite Viewer**: Allows viewing and querying SQLite databases within VS Code.
+*   **Tailwind CSS IntelliSense**: Provides autocompletion, linting, and previews for Tailwind CSS.
 
 ## About Laravel
 
