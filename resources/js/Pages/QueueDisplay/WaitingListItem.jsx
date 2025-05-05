@@ -7,13 +7,13 @@ const WaitingListItem = ({ queue, isFirst }) => {
     <div className={`rounded-lg p-3 text-center shadow-xl ${gradientClass} ${borderClass}`}>
       <div className='flex flex-row items-center justify-between gap-8 p-4'>
         <div className='whitespace-nowrap text-3xl font-bold text-gray-800'>Q-{queue.queue_number}</div>
-        <div
-          className='truncate text-xl text-gray-600 sm:block'
-          title={`${queue.customer_type} - ${queue.service?.name}`}
-        >
-          {queue.customer_type} - {queue.service?.name}
+
+        <div className='hidden flex-col truncate whitespace-nowrap md:flex'>
+          <div className='truncate text-2xl text-gray-600'>{queue.service?.name}</div>
+          <div className='truncate text-gray-500'>{queue.customer_type}</div>
         </div>
-        <div className='text truncate text-gray-500 sm:block'>
+
+        <div className='truncate text-gray-500 sm:block'>
           {new Date(queue.created_at).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
