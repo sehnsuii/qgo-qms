@@ -63,10 +63,8 @@ export default function QueueTable() {
   const [queueData, setQueueData] = useState(defaultData);
   const [availableDates, setAvailableDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch available dates on mount
   useEffect(() => {
     const fetchDates = async () => {
       try {
@@ -76,7 +74,6 @@ export default function QueueTable() {
         }
         const dates = await response.json();
         const todayStr = dayjs().format('YYYY-MM-DD');
-        // Ensure today is included and list is sorted descending
         const updatedDates = [...new Set([todayStr, ...dates])].sort((a, b) => b.localeCompare(a));
         setAvailableDates(updatedDates);
       } catch (err) {
@@ -87,12 +84,12 @@ export default function QueueTable() {
     fetchDates();
   }, []);
 
-  // Fetch queue data based on selected date
   useEffect(() => {
+    let intervalId = null;
+
     const fetchQueueData = async () => {
       if (!selectedDate) return;
 
-      setLoading(true);
       setError(null);
       try {
         const response = await fetch(`/api/queues?date=${selectedDate}`);
@@ -113,12 +110,18 @@ export default function QueueTable() {
         setError(err.message);
         console.error('Error fetching queue data:', err);
         setQueueData(defaultData);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchQueueData();
+
+    intervalId = setInterval(fetchQueueData, 1000);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [selectedDate]);
 
   const handleStatusUpdate = useCallback(async (id, newStatus) => {
@@ -183,7 +186,7 @@ export default function QueueTable() {
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             className='rounded border-gray-300 text-sm shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-            disabled={loading && availableDates.length === 0}
+            disabled={availableDates.length === 0}
           >
             {availableDates.map((date) => (
               <option
@@ -200,88 +203,85 @@ export default function QueueTable() {
         </div>
       </div>
 
-      {loading && <p className='py-4 text-center text-gray-500'>Loading queues for {dayjs(selectedDate).format('MMM D, YYYY')}...</p>}
       {error && <p className='py-4 text-center text-red-500'>Error loading queues: {error}</p>}
 
-      {!loading && !error && (
-        <>
-          <table
-            {...getTableProps()}
-            className='min-w-full divide-y divide-gray-200'
-          >
-            <thead className='bg-gray-50'>
-              {headerGroups.map((headerGroup) => (
-                <tr
-                  key={headerGroup.getHeaderGroupProps().key}
-                  {...headerGroup.getHeaderGroupProps()}
-                >
-                  {headerGroup.headers.map((column) => (
-                    <th
-                      key={column.id}
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'
-                    >
-                      <div className='flex items-center justify-between'>
-                        {column.render('Header')}
-                        <span>
-                          {column.isSorted ? (
-                            column.isSortedDesc ? (
-                              <FaSortDown className='ml-1 inline-block' />
-                            ) : (
-                              <FaSortUp className='ml-1 inline-block' />
-                            )
-                          ) : (
-                            column.canSort && <FaSort className='ml-1 inline-block opacity-30' />
-                          )}
-                        </span>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody
-              {...getTableBodyProps()}
-              className='divide-y divide-gray-200 bg-white'
-            >
-              {page.length > 0 ? (
-                page.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <QueueTableRow
-                      key={row.original.id}
-                      row={row}
-                      prepareRow={prepareRow}
-                      handleStatusUpdate={handleStatusUpdate}
-                    />
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className='px-6 py-4 text-center text-sm text-gray-500'
+      <>
+        <table
+          {...getTableProps()}
+          className='min-w-full divide-y divide-gray-200'
+        >
+          <thead className='bg-gray-50'>
+            {headerGroups.map((headerGroup) => (
+              <tr
+                key={headerGroup.getHeaderGroupProps().key}
+                {...headerGroup.getHeaderGroupProps()}
+              >
+                {headerGroup.headers.map((column) => (
+                  <th
+                    key={column.id}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'
                   >
-                    No queues found for {dayjs(selectedDate).format('MMM D, YYYY')}.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-          <QueueTablePagination
-            gotoPage={gotoPage}
-            previousPage={previousPage}
-            nextPage={nextPage}
-            canPreviousPage={canPreviousPage}
-            canNextPage={canNextPage}
-            pageCount={pageCount}
-            pageIndex={pageIndex}
-            pageOptions={pageOptions}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-          />
-        </>
-      )}
+                    <div className='flex items-center justify-between'>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <FaSortDown className='ml-1 inline-block' />
+                          ) : (
+                            <FaSortUp className='ml-1 inline-block' />
+                          )
+                        ) : (
+                          column.canSort && <FaSort className='ml-1 inline-block opacity-30' />
+                        )}
+                      </span>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody
+            {...getTableBodyProps()}
+            className='divide-y divide-gray-200 bg-white'
+          >
+            {page.length > 0 ? (
+              page.map((row) => {
+                prepareRow(row);
+                return (
+                  <QueueTableRow
+                    key={row.original.id}
+                    row={row}
+                    prepareRow={prepareRow}
+                    handleStatusUpdate={handleStatusUpdate}
+                  />
+                );
+              })
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className='px-6 py-4 text-center text-sm text-gray-500'
+                >
+                  No queues found for {dayjs(selectedDate).format('MMM D, YYYY')}.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <QueueTablePagination
+          gotoPage={gotoPage}
+          previousPage={previousPage}
+          nextPage={nextPage}
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          pageCount={pageCount}
+          pageIndex={pageIndex}
+          pageOptions={pageOptions}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+        />
+      </>
     </div>
   );
 }

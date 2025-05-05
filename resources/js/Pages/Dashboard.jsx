@@ -95,12 +95,9 @@ export default function Dashboard() {
       <div className='py-12'>
         <div className='mx-auto max-w-7xl sm:px-6 lg:px-8'>
           {error && <p className='rounded bg-red-100 p-4 text-center text-red-700'>Error loading data: {error}</p>}
-
-          <>
-            <QueueStats stats={stats} />
-            <CounterTable data={counterData} />
-            <QueueTable data={queueData} />
-          </>
+          <QueueStats stats={stats} />
+          <CounterTable data={counterData} />
+          <QueueTable data={queueData} />
         </div>
       </div>
     </AuthenticatedLayout>
