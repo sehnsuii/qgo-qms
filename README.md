@@ -139,7 +139,7 @@ Development was aided by Visual Studio Code and the following extensions:
 *   **Laravel**: Provides Laravel-specific snippets and utilities.
 *   **Laravel Blade Snippets**: Adds Blade syntax highlighting and snippets.
 *   **PostCSS Language Support**: Adds PostCSS syntax highlighting.
-*   **Roo Code**: AI coding assistant (that's me!).
+*   **Roo Code**: AI coding assistant (Utilized Google Gemini 2.5 Pro thru VS Code LM API).
 *   **SQLite Viewer**: Allows viewing and querying SQLite databases within VS Code.
 *   **Tailwind CSS IntelliSense**: Provides autocompletion, linting, and previews for Tailwind CSS.
 
