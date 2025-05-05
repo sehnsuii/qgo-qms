@@ -1,16 +1,15 @@
 import LandingLayout from '@/Layouts/LandingLayout';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
+import { useReactToPrint } from 'react-to-print';
 
-// Import the new step components and print utility
 import CustomerTypeStep from './QueueForm/CustomerTypeStep';
 import ServiceTypeStep from './QueueForm/ServiceTypeStep';
 import StepIndicator from './QueueForm/StepIndicator';
 import WelcomeStep from './QueueForm/WelcomeStep';
-import { printQueueTicket } from './QueueForm/printUtils';
+import QueueTicket from './QueueForm/QueueTicket';
 
 const Welcome = ({ laravelVersion, phpVersion }) => {
-  // State remains in the parent component
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     customerType: null,
@@ -19,12 +18,18 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
   const [submitting, setSubmitting] = useState(false);
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
+  const [lastGeneratedTicket, setLastGeneratedTicket] = useState(null);
 
-  // Step navigation functions
+  const ticketRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: ticketRef,
+    documentTitle: `QueueTicket-Q-${lastGeneratedTicket?.queue_number || ''}`,
+  });
+
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  // Form data handler
   const handleSelect = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -32,7 +37,6 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
     }));
   };
 
-  // Fetch services
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -59,16 +63,20 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
     fetchServices();
   }, []);
 
-  // Helper to get service name for printing
-  const getSelectedServiceName = () => {
-    if (!formData.serviceId || services.length === 0) {
+  useEffect(() => {
+    if (lastGeneratedTicket && ticketRef.current) {
+      handlePrint();
+    }
+  }, [lastGeneratedTicket, handlePrint]);
+
+  const getSelectedServiceName = (serviceId) => {
+    if (!serviceId || services.length === 0) {
       return 'N/A';
     }
-    const selectedService = services.find((service) => service.id === formData.serviceId);
+    const selectedService = services.find((service) => service.id === serviceId);
     return selectedService ? selectedService.name : 'Unknown Service';
   };
 
-  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -103,21 +111,27 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
       const data = await response.json();
       console.log('Queue created:', data);
 
+      const ticketData = {
+        queue_number: data.queue_number,
+        customerType: formData.customerType,
+        serviceName: getSelectedServiceName(formData.serviceId),
+      };
       Swal.fire({
         title: 'Queue Generated!',
         html: `Your queue number is: <b>Q-${data.queue_number}</b>`,
         icon: 'success',
         confirmButtonText: 'OK',
+        showCancelButton: false,
         willClose: () => {
-          printQueueTicket(data.queue_number, formData.customerType, getSelectedServiceName());
+          setLastGeneratedTicket(ticketData);
+          setFormData({ customerType: null, serviceId: null });
+          setStep(1);
         },
       });
-
-      setFormData({ customerType: null, serviceId: null });
-      setStep(1);
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('Failed to submit form. Please try again.');
+      setLastGeneratedTicket(null);
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +163,7 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
           />
         );
       default:
-        return <WelcomeStep onNextStep={nextStep} />; // Default to step 1
+        return <WelcomeStep onNextStep={nextStep} />;
     }
   };
 
@@ -162,6 +176,14 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
         {<StepIndicator currentStep={step} />}
         {renderStep()}
       </div>
+      {lastGeneratedTicket && (
+        <QueueTicket
+          ref={ticketRef}
+          queueNumber={lastGeneratedTicket.queue_number}
+          customerType={lastGeneratedTicket.customerType}
+          serviceName={lastGeneratedTicket.serviceName}
+        />
+      )}
     </LandingLayout>
   );
 };

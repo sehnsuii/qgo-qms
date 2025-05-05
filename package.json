@@ -35,6 +35,7 @@
         "react-form-wizard-component": "^0.2.7",
         "react-icons": "^5.5.0",
         "react-table": "^7.8.0",
+        "react-to-print": "^3.1.0",
         "sweetalert2": "^11.19.1"
     }
 }
