@@ -21,7 +21,7 @@ const LandingLayout = ({ laravelVersion, phpVersion, children }) => {
           <h1 className='text-xl font-semibold text-black'>City of San Pedro Laguna</h1>
         </div>
         <div className='flex justify-center'>
-          <ApplicationLogo className='block h-16 w-auto fill-current text-gray-800' />
+          <ApplicationLogo className='block h-16 w-auto md:object-cover' />
         </div>
       </header>
 
