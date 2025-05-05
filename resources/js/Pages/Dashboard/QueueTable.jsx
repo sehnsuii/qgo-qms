@@ -1,58 +1,17 @@
-import SecondaryButton from '@/Components/SecondaryButton';
 import { useCallback, useMemo, useState } from 'react';
-import { FaCheck, FaPause, FaPlay, FaSort, FaSortDown, FaSortUp, FaTimes } from 'react-icons/fa';
+import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { usePagination, useSortBy, useTable } from 'react-table';
+import QueueTablePagination from './QueueTablePagination';
+import QueueTableRow from './QueueTableRow';
 
-// Placeholder data - replace with actual props later
 const defaultData = [];
 
-// Placeholder function - replace with actual API call
 const updateQueueStatus = async (id, status) => {
   console.log(`Updating queue ${id} to status: ${status}`);
   // Simulate API call
   await new Promise((resolve) => setTimeout(resolve, 500));
   // In a real app, you'd likely refetch data or update local state based on API response
   return true;
-};
-
-const getCustomerTypeStyles = (customerType) => {
-  let customerTypeClass = '';
-  switch (customerType) {
-    case 'Priority':
-      customerTypeClass = 'text-yellow-900';
-      break;
-    case 'Regular':
-      customerTypeClass = 'text-blue-900';
-      break;
-    default:
-      customerTypeClass = 'bg-gradient-to-r from-gray-100 to-gray-300 text-gray-900';
-      break;
-  }
-  return `px-4 py-1 rounded-full text-xs font-semibold inline-flex leading-5 ${customerTypeClass}`;
-};
-
-// Define status colors and styles
-const getStatusStyles = (status) => {
-  let statusClass = '';
-
-  switch (status) {
-    case 'Completed':
-      statusClass = 'g-green-100 text-green-800 bg-gradient-to-r from-green-100 to-green-300';
-      break;
-    case 'Cancelled':
-      statusClass = 'bg-gray-100 text-red-800 bg-gradient-to-r from-red-100 to-red-300';
-      break;
-    default:
-      statusClass = 'bg-blue-100 text-blue-800';
-  }
-
-  if (status === 'Waiting') {
-    statusClass = 'bg-gradient-to-r from-yellow-100 to-yellow-300';
-  } else if (status === 'Now Serving') {
-    statusClass = 'bg-gradient-to-r from-blue-100 to-blue-300';
-  }
-
-  return `px-4 py-1 rounded-full text-xs font-semibold inline-flex leading-5 ${statusClass}`;
 };
 
 export default function QueueTable({ data = defaultData }) {
@@ -67,75 +26,24 @@ export default function QueueTable({ data = defaultData }) {
 
   const columns = useMemo(
     () => [
-      { Header: 'ID', accessor: 'id' },
       { Header: 'Queue No.', accessor: 'queue_no' },
-      {
-        Header: 'Customer Type',
-        accessor: 'customer_type',
-        Cell: ({ value }) => <span className={`${getCustomerTypeStyles(value)}`}>{value}</span>,
-      },
+      { Header: 'Customer Type', accessor: 'customer_type' },
       { Header: 'Service Type', accessor: 'service_type' },
-      {
-        Header: 'Status',
-        accessor: 'status',
-        Cell: ({ row }) => <span className={getStatusStyles(row.original.status, row.original.customer_type)}>{row.original.status}</span>,
-      },
-      {
-        Header: 'Timestamp',
-        accessor: 'timestamp',
-        Cell: ({ value }) => new Date(value).toLocaleString(),
-      },
-      {
-        Header: 'Actions',
-        accessor: 'actions',
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const { id, status } = row.original;
-          const isWaiting = status === 'Waiting';
-          const isServing = status === 'Now Serving';
-          const isCompleted = status === 'Completed';
-          const isCancelled = status === 'Cancelled';
-
-          return (
-            <div className='flex space-x-1'>
-              <button
-                onClick={() => handleStatusUpdate(id, 'Waiting')}
-                disabled={isWaiting || isCompleted || isCancelled}
-                className={`rounded p-1 text-gray-600 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 ${status === 'Waiting' ? 'bg-yellow-200' : ''}`}
-                title='Set to Waiting'
-              >
-                <FaPause />
-              </button>
-              <button
-                onClick={() => handleStatusUpdate(id, 'Now Serving')}
-                disabled={isServing || isCancelled}
-                className={`rounded p-1 text-blue-600 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 ${isServing ? 'bg-blue-200' : ''}`}
-                title='Set to Now Serving'
-              >
-                <FaPlay />
-              </button>
-              <button
-                onClick={() => handleStatusUpdate(id, 'Completed')}
-                disabled={isWaiting || isCompleted || isCancelled}
-                className={`rounded p-1 text-green-600 hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50 ${isCompleted ? 'bg-green-200' : ''}`}
-                title='Set to Completed'
-              >
-                <FaCheck />
-              </button>
-              <button
-                onClick={() => handleStatusUpdate(id, 'Cancelled')}
-                disabled={isWaiting || isCompleted || isCancelled}
-                className={`rounded p-1 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 ${isCancelled ? 'bg-red-200' : ''}`}
-                title='Set to Cancelled'
-              >
-                <FaTimes />
-              </button>
-            </div>
-          );
-        },
-      },
+      { Header: 'Status', accessor: 'status' },
+      { Header: 'Time', accessor: 'timestamp' },
+      { Header: 'Actions', accessor: 'actions', disableSortBy: true },
     ],
-    [handleStatusUpdate], // Add handleStatusUpdate as dependency
+    [],
+  );
+
+  const tableInstance = useTable(
+    {
+      columns,
+      data: queueData,
+      initialState: { pageIndex: 0, pageSize: 10 },
+    },
+    useSortBy,
+    usePagination,
   );
 
   const {
@@ -153,19 +61,18 @@ export default function QueueTable({ data = defaultData }) {
     previousPage,
     setPageSize,
     state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data: queueData,
-      initialState: { pageIndex: 0, pageSize: 10 },
-    },
-    useSortBy,
-    usePagination,
-  );
+  } = tableInstance;
+
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
     <div className='overflow-x-auto rounded-lg bg-white p-6 shadow-sm'>
-      <h3 className='mb-4 text-lg font-semibold text-gray-700'>Today's Queues</h3>
+      <h3 className='mb-4 text-lg font-semibold text-gray-700'>Today's Queues - {formattedDate}</h3>
       <table
         {...getTableProps()}
         className='min-w-full divide-y divide-gray-200'
@@ -205,81 +112,29 @@ export default function QueueTable({ data = defaultData }) {
           {...getTableBodyProps()}
           className='divide-y divide-gray-200 bg-white'
         >
-          {page.map((row) => {
-            prepareRow(row);
-            return (
-              <tr
-                key={row.id}
-                {...row.getRowProps()}
-                className='hover:bg-gray-50'
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td
-                      key={`${row.id}-${cell.column.id}`}
-                      {...cell.getCellProps()}
-                      className='whitespace-nowrap px-6 py-4 text-sm text-gray-900'
-                    >
-                      {cell.render('Cell')}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {page.map((row) => (
+            <QueueTableRow
+              key={row.id}
+              row={row}
+              prepareRow={prepareRow}
+              handleStatusUpdate={handleStatusUpdate}
+            />
+          ))}
         </tbody>
       </table>
 
-      <div className='mt-4 flex items-center justify-between'>
-        <div className='flex items-center space-x-2'>
-          <SecondaryButton
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-          >
-            {'<<'}
-          </SecondaryButton>
-          <SecondaryButton
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-          >
-            {'<'}
-          </SecondaryButton>
-          <SecondaryButton
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-          >
-            {'>'}
-          </SecondaryButton>
-          <SecondaryButton
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            {'>>'}
-          </SecondaryButton>
-        </div>
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-          }}
-          className='rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-        >
-          {[10, 20, 30, 40, 50].map((pageSizeOption) => (
-            <option
-              key={pageSizeOption}
-              value={pageSizeOption}
-            >
-              Show {pageSizeOption}
-            </option>
-          ))}
-        </select>
-      </div>
+      <QueueTablePagination
+        gotoPage={gotoPage}
+        previousPage={previousPage}
+        nextPage={nextPage}
+        canPreviousPage={canPreviousPage}
+        canNextPage={canNextPage}
+        pageCount={pageCount}
+        pageIndex={pageIndex}
+        pageOptions={pageOptions}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
     </div>
   );
 }
