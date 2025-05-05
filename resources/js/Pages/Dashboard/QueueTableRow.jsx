@@ -59,7 +59,7 @@ export default function QueueTableRow({ row, prepareRow, handleStatusUpdate }) {
               </button>
               <button
                 onClick={() => handleStatusUpdate(id, 'Now Serving')}
-                disabled={isServing || isCancelled}
+                disabled={isServing || isCompleted || isCancelled}
                 className={`${baseClass} text-blue-600 hover:bg-blue-100 ${isServing ? 'bg-blue-200' : ''}`}
                 title='Set to Now Serving'
               >
