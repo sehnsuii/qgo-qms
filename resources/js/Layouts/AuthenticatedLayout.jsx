@@ -6,7 +6,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
-  const user = usePage().props.auth.user;
+  const { user, assignedCounterId } = usePage().props.auth;
 
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
@@ -29,6 +29,14 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                   Dashboard
                 </NavLink>
+                {assignedCounterId && (
+                  <NavLink
+                    href={route('counter.show', { counter: assignedCounterId })}
+                    active={route().current('counter.show', { counter: assignedCounterId })}
+                  >
+                    Counter {assignedCounterId}
+                  </NavLink>
+                )}
               </div>
             </div>
 
@@ -112,6 +120,15 @@ export default function AuthenticatedLayout({ header, children }) {
             >
               Dashboard
             </ResponsiveNavLink>
+
+            {assignedCounterId && (
+              <ResponsiveNavLink
+                href={route('counter.show', { counter: assignedCounterId })}
+                active={route().current('counter.show', { counter: assignedCounterId })}
+              >
+                Counter {assignedCounterId}
+              </ResponsiveNavLink>
+            )}
           </div>
 
           <div className='border-t border-gray-200 pb-1 pt-4'>

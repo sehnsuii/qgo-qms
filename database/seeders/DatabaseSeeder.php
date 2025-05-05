@@ -13,14 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Remove default user factory calls, as UserSeeder handles user creation now.
         // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
 
         $this->call([
+            UserSeeder::class,
             ServicesSeeder::class,
             CountersSeeder::class,
             QueueSeeder::class,

@@ -56,7 +56,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }
@@ -69,7 +69,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('status', 'ready')->first();
         if ($counter) {
-            $counter->status = 'busy';
+            $counter->status = 'Busy';
             $counter->queue_id = $queue->id;
             $counter->save();
         }
@@ -82,7 +82,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }
@@ -95,7 +95,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }
@@ -198,7 +198,7 @@ class QueueController extends Controller
         // Logic to potentially detach from counter
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }
@@ -246,7 +246,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }
@@ -269,7 +269,7 @@ class QueueController extends Controller
     {
         $counter = Counters::where('queue_id', $queue->id)->first();
         if ($counter) {
-            $counter->status = 'ready';
+            $counter->status = 'Ready';
             $counter->queue_id = null;
             $counter->save();
         }

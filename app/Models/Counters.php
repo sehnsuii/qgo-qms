@@ -18,4 +18,12 @@ class Counters extends Model
     {
         return $this->belongsTo(Queue::class);
     }
+
+    /**
+     * Get the user assigned to the counter.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

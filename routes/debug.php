@@ -9,7 +9,7 @@ Route::get('/debug/form', [QueueController::class, 'createDebug'])->name('queues
 Route::post('/debug/queues', [QueueController::class, 'storeDebug'])->name('queues.store.debug');
 Route::get('/debug/Q-{queue}', [QueueController::class, 'printDebug'])->name('queue.print.debug');
 Route::patch('/debug/Q-{queue}/wait', [QueueController::class, 'setWaitingDebug'])->name('queue.wait.debug');
-Route::patch('/debug/Q-{queue}/serve', [QueueController::class, 'setServingDebug'])->name('queue.serve.debug');
+Route::patch('/debug/Q-{queue}/serve', [QueueController::class, 'setServingDebug'])->name('queue.serve.debug'); // Keep debug route
 Route::patch('/debug/Q-{queue}/complete', [QueueController::class, 'setCompletedDebug'])->name('queue.complete.debug');
 Route::patch('/debug/Q-{queue}/cancel', [QueueController::class, 'setCancelledDebug'])->name('queue.cancel.debug');
 

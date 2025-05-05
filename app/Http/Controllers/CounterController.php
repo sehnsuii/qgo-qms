@@ -27,7 +27,7 @@ class CounterController extends Controller
             $queue->save();
         }
 
-        $counter->status = 'ready';
+        $counter->status = 'Ready';
         $counter->queue_id = null;
         $counter->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -40,7 +40,7 @@ class CounterController extends Controller
             $queue->save();
         }
 
-        $counter->status = 'ready';
+        $counter->status = 'Ready';
         $counter->queue_id = null;
         $counter->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -53,7 +53,7 @@ class CounterController extends Controller
             $queue->save();
         }
 
-        $counter->status = 'ready';
+        $counter->status = 'Ready';
         $counter->queue_id = null;
         $counter->save();
         return back()->with('success', 'Q-' . $queue->queue_number . ' is ' . $queue->status);
@@ -69,6 +69,7 @@ class CounterController extends Controller
      */
     public function indexApi(): JsonResponse
     {
+        // Reverted: Only load queue relationship
         $counters = Counters::with('queue')->orderBy('id', 'asc')->get();
         return response()->json($counters);
     }
@@ -87,39 +88,40 @@ class CounterController extends Controller
     }
 
     /**
-     * Update the status of the specified counter.
+     * Update the readiness status of the specified counter (Toggle Ready/NotReady).
      * API Endpoint.
+     * Renamed from updateStatusApi to updateReadinessApi for clarity.
      *
      * @param Counters $counter
-     * @param Request $request
+     * @param Request $request // Request should contain the desired state ('Ready' or 'NotReady')
      * @return JsonResponse
      */
-    public function updateStatusApi(Counters $counter, Request $request): JsonResponse
+    public function updateReadinessApi(Counters $counter, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:online,offline', // Validate incoming status
+            'status' => 'required|string|in:Ready,NotReady',
         ]);
 
-        // Map 'online' from frontend to 'ready' for backend
-        $newStatus = $validated['status'] === 'online' ? 'ready' : 'offline';
+        $newStatus = $validated['status'];
 
-        // Ensure the status is valid according to the database enum
-        if (!in_array($newStatus, ['ready', 'offline'])) {
-             return response()->json(['message' => 'Invalid status provided.'], 422);
+        // Ensure counter is not busy
+        if ($counter->status === 'Busy') {
+            return response()->json(['message' => 'Cannot change readiness while serving a customer.'], 409); // Conflict
         }
 
-        // Prevent setting to ready if the counter is busy
-        if ($newStatus === 'ready' && $counter->queue_id !== null) {
-             return response()->json(['message' => 'Cannot set counter to ready while serving a customer.'], 409); // Conflict
+        // Ensure the requested status is different from the current one
+        if ($counter->status === $newStatus) {
+            $counter->load('queue.service');
+            return response()->json($counter); // No change needed, return current state
+        }
+
+        // Prevent setting to Ready if the counter has no assigned user (implies offline)
+        // This check might be redundant if UI prevents access, but good for API robustness
+        if ($newStatus === 'Ready' && $counter->user_id === null) {
+             return response()->json(['message' => 'Cannot set counter to Ready without an assigned user.'], 409);
         }
 
         $counter->status = $newStatus;
-
-        // If going offline, ensure no queue is assigned (optional, depends on desired logic)
-        // if ($newStatus === 'offline') {
-        //     $counter->queue_id = null;
-        // }
-
         $counter->save();
         $counter->load('queue.service'); // Reload relations for consistent response
 
@@ -136,7 +138,7 @@ class CounterController extends Controller
     public function callNextQueueApi(Counters $counter): JsonResponse
     {
         // Check if the counter is ready
-        if ($counter->status !== 'ready') {
+        if ($counter->status !== 'Ready') {
             return response()->json(['message' => 'Counter is not ready.'], 409); // Conflict
         }
 
@@ -149,14 +151,18 @@ class CounterController extends Controller
         if (!$nextQueue) {
             return response()->json(['message' => 'No waiting queues available.'], 404); // Not Found
         }
-
         // Update the queue status and assign it to the counter
         $nextQueue->status = 'Now Serving';
         $nextQueue->save();
 
         $counter->queue_id = $nextQueue->id;
+        $counter->status = 'Busy'; // Explicitly set status to Busy
         $counter->save();
 
-        return response()->json($nextQueue);
+        // Return the updated counter including the queue information
+        $counter->load('queue.service');
+        return response()->json($counter);
     }
+
+    // assignUserApi and unassignUserApi methods removed.
 }

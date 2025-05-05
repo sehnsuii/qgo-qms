@@ -6,7 +6,8 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Login({ status, canResetPassword }) {
+// Accept 'counter' prop (will be null for standard login)
+export default function Login({ status, canResetPassword, counter }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
     password: '',
@@ -16,14 +17,23 @@ export default function Login({ status, canResetPassword }) {
   const submit = (e) => {
     e.preventDefault();
 
-    post(route('login'), {
+    // Determine the target route based on whether 'counter' prop exists
+    const targetRoute = counter
+      ? route('counter.login.store', { counter: counter.id }) // Use counter-specific route
+      : route('login'); // Use standard login route
+
+    post(targetRoute, {
       onFinish: () => reset('password'),
     });
   };
 
   return (
     <GuestLayout>
-      <Head title='Log in' />
+      {/* Dynamically set title */}
+      <Head title={counter ? `Counter ${counter.id} Log in` : 'Log in'} />
+
+      {/* Optionally display which counter is being logged into */}
+      {counter && <div className='mb-4 rounded bg-blue-100 p-3 text-center text-sm font-medium text-blue-700'>Logging into Counter {counter.id}</div>}
 
       {status && <div className='mb-4 text-sm font-medium text-green-600'>{status}</div>}
 

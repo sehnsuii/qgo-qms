@@ -17,8 +17,9 @@ class CountersFactory extends Factory
     public function definition(): array
     {
         return [
-            'status' => 'ready', // Default status for a counter
+            'status' => 'NotReady', // Default status for a counter when created/assigned
             'queue_id' => null,  // Default to no queue assigned
+            'user_id' => null,   // Default to no user assigned
         ];
     }
 }

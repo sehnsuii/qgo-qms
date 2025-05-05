@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('counters', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->timestamps();
-            $table->enum('status', ['ready', 'busy', 'offline'])->default('ready');
+            $table->enum('status', ['NotReady', 'Ready', 'Busy'])->default('NotReady');
             $table->foreignId('queue_id')->nullable()->constrained('queues')->onDelete('set null')->default(null);
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null')->default(null);
         });
     }
 
