@@ -197,7 +197,7 @@ class QueueController extends Controller
 
         $createdAt = now();
         $lastQueueToday = Queue::whereDate('created_at', $createdAt->toDateString())
-            ->where('customer_type', $validated['customer_type'])
+            // ->where('customer_type', $validated['customer_type']) // Differentiate by customer type if needed
             ->orderBy('queue_number', 'desc')
             ->first();
 
