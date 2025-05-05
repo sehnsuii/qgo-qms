@@ -25,6 +25,11 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
   const handlePrint = useReactToPrint({
     contentRef: ticketRef,
     documentTitle: `QueueTicket-Q-${lastGeneratedTicket?.queue_number || ''}`,
+    onAfterPrint: () => {
+      setLastGeneratedTicket(null);
+      setFormData({ customerType: null, serviceId: null });
+      setStep(1);
+    },
   });
 
   const nextStep = () => setStep(step + 1);
@@ -124,8 +129,6 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
         showCancelButton: false,
         willClose: () => {
           setLastGeneratedTicket(ticketData);
-          setFormData({ customerType: null, serviceId: null });
-          setStep(1);
         },
       });
     } catch (error) {
@@ -177,12 +180,14 @@ const Welcome = ({ laravelVersion, phpVersion }) => {
         {renderStep()}
       </div>
       {lastGeneratedTicket && (
-        <QueueTicket
-          ref={ticketRef}
-          queueNumber={lastGeneratedTicket.queue_number}
-          customerType={lastGeneratedTicket.customerType}
-          serviceName={lastGeneratedTicket.serviceName}
-        />
+        <div className='hidden'> 
+          <QueueTicket
+            ref={ticketRef}
+            queueNumber={lastGeneratedTicket.queue_number}
+            customerType={lastGeneratedTicket.customerType}
+            serviceName={lastGeneratedTicket.serviceName}
+          />
+        </div>
       )}
     </LandingLayout>
   );

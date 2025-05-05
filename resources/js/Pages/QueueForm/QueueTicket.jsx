@@ -1,28 +1,42 @@
 import React from 'react';
 
 const QueueTicket = React.forwardRef(({ queueNumber, customerType, serviceName }, ref) => {
-  const printDate = new Date().toLocaleString();
+  const printDate = new Date().toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const customerTypeClasses = () => {
+    if (customerType === 'Priority') {
+      return `text-yellow-600`;
+    } else if (customerType === 'Regular') {
+      return `text-blue-600`;
+    }
+  };
 
   return (
     <div
       ref={ref}
-      className='hidden p-5 print:block'
+      className='print:flex print:min-h-screen print:items-center print:justify-center'
     >
-      <div className='mx-auto max-w-xs border-2 border-dashed border-black p-5 text-center font-sans'>
-        <div className='mb-4'>
+      <div className='mx-auto max-w-sm rounded-lg border-2 border-dashed border-gray-500 p-12 text-center font-sans'>
+        <div className='mb-4 text-sm'>{printDate}</div>
+        <div className='align-center'>
           <img
             src='https://cityofsanpedrolaguna.gov.ph/wp-content/uploads/2023/02/logo-sanpedro.png'
-            width='80'
             alt='Logo'
-            className='mx-auto'
+            className='mx-auto mb-4 h-32 w-auto'
           />
-          <h2 className='mt-2 text-xl font-semibold'>City of San Pedro Laguna</h2>
+          <h1 className='text-2xl font-bold'>City of San Pedro Laguna</h1>
         </div>
-        <div className='my-1'>Queue Ticket</div>
-        <div className='my-2 text-2xl font-bold text-blue-600'>Q-{queueNumber}</div>
-        <div className='my-1 text-sm'>Customer Type: {customerType}</div>
-        <div className='my-1 text-sm'>Service: {serviceName}</div>
-        <div className='my-1 text-sm'>Date: {printDate}</div>
+        <div className='text-xl'>Queue Ticket</div>
+        <div className='my-6 text-6xl font-bold text-green-600'>Q-{queueNumber}</div>
+        <div className='text-2xl'>{serviceName}</div>
+        <div className={`text-xl font-bold ${customerTypeClasses()}`}>{customerType}</div>
       </div>
     </div>
   );
