@@ -6,12 +6,58 @@ import QueueTableRow from './QueueTableRow';
 
 const defaultData = [];
 
+const getCsrfToken = () => {
+  const token = document.querySelector('meta[name="csrf-token"]');
+  return token ? token.getAttribute('content') : null;
+};
+
 const updateQueueStatus = async (id, status) => {
   console.log(`Updating queue ${id} to status: ${status}`);
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  // In a real app, you'd likely refetch data or update local state based on API response
-  return true;
+  let endpoint = '';
+  switch (status) {
+    case 'Waiting':
+      endpoint = `/api/queues/${id}/wait`;
+      break;
+    case 'Now Serving':
+      endpoint = `/api/queues/${id}/serve`;
+      break;
+    case 'Completed':
+      endpoint = `/api/queues/${id}/complete`;
+      break;
+    case 'Cancelled':
+      endpoint = `/api/queues/${id}/cancel`;
+      break;
+    default:
+      console.error('Invalid status:', status);
+      return false;
+  }
+
+  try {
+    const csrfToken = getCsrfToken();
+    const response = await fetch(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken, // Include CSRF token
+        Accept: 'application/json',
+      },
+      // body: JSON.stringify({ status }) // Body might not be needed if endpoint implies status
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(`Failed to update status for queue ${id}:`, response.status, errorData.message || 'Unknown error');
+      // Optionally: Show error message to the user
+      return false;
+    }
+
+    console.log(`Queue ${id} status updated to ${status} successfully.`);
+    // The handleStatusUpdate function will update the local state on success
+    return true;
+  } catch (error) {
+    console.error(`Error updating status for queue ${id}:`, error);
+    return false;
+  }
 };
 
 export default function QueueTable({ data = defaultData }) {
