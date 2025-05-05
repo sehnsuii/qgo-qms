@@ -40,6 +40,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        session(['is_counter_login' => false]); // Flag for standard login
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -53,6 +54,7 @@ class AuthenticatedSessionController extends Controller
 
         // 2. Regenerate session
         $request->session()->regenerate();
+        session(['is_counter_login' => true]); // Flag for counter login
 
         // 3. Assign the user to the counter
         $user = $request->user();
@@ -108,8 +110,9 @@ class AuthenticatedSessionController extends Controller
      * (Ensure logout also unassigns the counter)
      */
     public function destroy(Request $request): RedirectResponse
-    {-
+    {
         $user = $request->user();
+        $counterId = null; // Variable to store counter ID if applicable
         if ($user) {
             try {
                 $assignedCounter = Counters::where('user_id', $user->id)->first();
@@ -119,6 +122,7 @@ class AuthenticatedSessionController extends Controller
                     $assignedCounter->status = 'Not Ready';
                     $assignedCounter->queue_id = null;
                     $assignedCounter->save();
+                    $counterId = $assignedCounter->id; // Store the ID for redirect
                     Log::info("Counter {$assignedCounter->id} unassigned from User {$user->id} during logout.");
                 }
             } catch (\Exception $e) {
@@ -132,6 +136,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Redirect based on whether a counter was associated
+        if ($counterId) {
+            return redirect()->route('counter.login.create', ['counter' => $counterId]);
+        } else {
+            return redirect()->route('login');
+        }
     }
 }

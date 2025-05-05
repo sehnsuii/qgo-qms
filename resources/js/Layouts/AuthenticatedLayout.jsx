@@ -6,7 +6,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
-  const { user, assignedCounterId } = usePage().props.auth;
+  const { user, assignedCounterId, is_counter_login } = usePage().props.auth;
 
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
@@ -23,12 +23,14 @@ export default function AuthenticatedLayout({ header, children }) {
               </div>
 
               <div className='hidden space-x-8 sm:-my-px sm:ms-10 sm:flex'>
-                <NavLink
-                  href={route('dashboard')}
-                  active={route().current('dashboard')}
-                >
-                  Dashboard
-                </NavLink>
+                {!is_counter_login && (
+                  <NavLink
+                    href={route('dashboard')}
+                    active={route().current('dashboard')}
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
                 {assignedCounterId && (
                   <NavLink
                     href={route('counter.show', { counter: assignedCounterId })}
@@ -114,12 +116,14 @@ export default function AuthenticatedLayout({ header, children }) {
 
         <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
           <div className='space-y-1 pb-3 pt-2'>
-            <ResponsiveNavLink
-              href={route('dashboard')}
-              active={route().current('dashboard')}
-            >
-              Dashboard
-            </ResponsiveNavLink>
+            {!is_counter_login && ( // Conditionally render Dashboard link for mobile
+              <ResponsiveNavLink
+                href={route('dashboard')}
+                active={route().current('dashboard')}
+              >
+                Dashboard
+              </ResponsiveNavLink>
+            )}
 
             {assignedCounterId && (
               <ResponsiveNavLink
