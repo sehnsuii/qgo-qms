@@ -5,10 +5,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import WaitingListItem from './QueueDisplay/WaitingListItem';
 
 export default function Counter({ auth, counterId }) {
   const [counterStatus, setCounterStatus] = useState('Not Ready');
   const [currentQueue, setCurrentQueue] = useState(null);
+  const [waitingQueueList, setWaitingQueueList] = useState([]);
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
@@ -32,10 +34,12 @@ export default function Counter({ auth, counterId }) {
       const data = await response.json();
       setCurrentQueue(data.queue);
       setCounterStatus(data.status || 'Not Ready');
+      setWaitingQueueList(data.waiting_list || []);
     } catch (err) {
       console.error('Error fetching counter data:', err);
       setError(err.message);
       setCurrentQueue(null);
+      setWaitingQueueList([]);
     }
   };
 
@@ -198,7 +202,7 @@ export default function Counter({ auth, counterId }) {
                   <h3 className='mb-4 text-lg font-medium leading-6 text-gray-900'>Current Queue</h3>
                   {currentQueue ? (
                     <div className='rounded-md border border-gray-300 bg-gray-50 p-4'>
-                      <p className='text-2xl font-bold text-blue-600'>{currentQueue.queue_number}</p>
+                      <p className='text-2xl font-bold text-blue-600'>Q-{currentQueue.queue_number}</p>
                       <p>Service: {currentQueue.service?.name || 'N/A'}</p>
                       <p>Type: {currentQueue.customer_type}</p>
                       <p>
@@ -243,6 +247,23 @@ export default function Counter({ auth, counterId }) {
                       {counterStatus === 'Not Ready' && <p className='mt-4 text-sm italic'>Set status to "Ready" to call the next customer.</p>}
                     </div>
                   )}
+
+                  <div className='mt-6 border-t pt-4'>
+                    <h3 className='mb-4 text-lg font-medium leading-6 text-gray-900'>Waiting Customers</h3>
+                    {waitingQueueList.length > 0 ? (
+                      <div className='max-h-[50vh] space-y-3 overflow-y-auto pr-2'>
+                        {waitingQueueList.map((queueItem, index) => (
+                          <WaitingListItem
+                            key={queueItem.id}
+                            queue={queueItem}
+                            isFirst={index === 0}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <p className='text-sm text-gray-500'>No customers are currently waiting.</p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

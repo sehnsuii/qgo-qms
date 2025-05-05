@@ -84,7 +84,15 @@ class CounterController extends Controller
     public function showApi(Counters $counter): JsonResponse
     {
         $counter->load('queue.service');
-        return response()->json($counter);
+        $waitingList = Queue::where('status', 'Waiting')
+                            ->whereDate('created_at', today())
+                            ->with('service')
+                            ->orderBy('created_at', 'asc')
+                            ->get();
+
+        $responseData = $counter->toArray();
+        $responseData['waiting_list'] = $waitingList;
+        return response()->json($responseData);
     }
 
     /**
@@ -164,6 +172,4 @@ class CounterController extends Controller
         $counter->load('queue.service');
         return response()->json($counter);
     }
-
-    // assignUserApi and unassignUserApi methods removed.
 }
