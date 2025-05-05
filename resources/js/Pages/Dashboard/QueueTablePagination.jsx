@@ -1,4 +1,5 @@
 import SecondaryButton from '@/Components/SecondaryButton';
+import { MdFirstPage, MdLastPage, MdNavigateBefore, MdNavigateNext } from 'react-icons/md';
 
 export default function QueueTablePagination({ gotoPage, previousPage, nextPage, canPreviousPage, canNextPage, pageCount, pageIndex, pageOptions, pageSize, setPageSize }) {
   return (
@@ -8,25 +9,25 @@ export default function QueueTablePagination({ gotoPage, previousPage, nextPage,
           onClick={() => gotoPage(0)}
           disabled={!canPreviousPage}
         >
-          {'<<'}
+          <MdFirstPage />
         </SecondaryButton>
         <SecondaryButton
           onClick={() => previousPage()}
           disabled={!canPreviousPage}
         >
-          {'<'}
+          <MdNavigateBefore />
         </SecondaryButton>
         <SecondaryButton
           onClick={() => nextPage()}
           disabled={!canNextPage}
         >
-          {'>'}
+          <MdNavigateNext />
         </SecondaryButton>
         <SecondaryButton
           onClick={() => gotoPage(pageCount - 1)}
           disabled={!canNextPage}
         >
-          {'>>'}
+          <MdLastPage />
         </SecondaryButton>
       </div>
       <span>
