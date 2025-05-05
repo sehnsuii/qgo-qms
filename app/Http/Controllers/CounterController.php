@@ -144,7 +144,8 @@ class CounterController extends Controller
 
         // Get the next queue for the counter
         $nextQueue = Queue::where('status', 'Waiting')
-            // ->where('service_id', $counter->service_id)
+            // ->where('service_id', $counter->service_id) // We can lock the counter to only serve a specific service
+            ->where('customer_type', 'Priority') // We prioritize Priority customers
             ->orderBy('created_at', 'asc')
             ->first();
 
