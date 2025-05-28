@@ -41,7 +41,7 @@ export default function QueueStats({ stats = defaultStats }) {
   );
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value,}) {
   return (
     <div className='rounded border border-gray-200 bg-gray-50 p-4 text-center'>
       <div className='text-2xl font-bold text-gray-800'>{value}</div>

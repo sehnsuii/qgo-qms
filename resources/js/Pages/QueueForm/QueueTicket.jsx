@@ -31,12 +31,15 @@ const QueueTicket = React.forwardRef(({ queueNumber, customerType, serviceName }
             alt='Logo'
             className='mx-auto mb-4 h-32 w-auto'
           />
-          <h1 className='text-2xl font-bold'>City of San Pedro Laguna</h1>
+          <h2 className='text-2xl font-bold'>City of San Pedro Laguna</h2> {/* Changed to h2 */}
         </div>
-        <div className='text-xl'>Queue Ticket</div>
+        <h3 className='text-xl'>Queue Ticket</h3> {/* Changed to h3 */}
         <div className='my-6 text-6xl font-bold text-green-600'>Q-{queueNumber}</div>
         <div className='text-2xl'>{serviceName}</div>
         <div className={`text-xl font-bold ${customerTypeClasses()}`}>{customerType}</div>
+        <h1 className='mt-6 text-xl font-semibold text-gray-700'>
+          Please wait for your number to be called. Thank you for your patience.
+        </h1>
       </div>
     </div>
   );

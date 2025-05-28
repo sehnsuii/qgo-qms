@@ -22,7 +22,7 @@ const WelcomeStep = ({ onNextStep }) => {
       <h2 className='font-["Montserrat"] text-4xl font-semibold text-green-800'>City of San Pedro Laguna</h2>
       <div className='my-4 flex w-4/5 items-center gap-4'>
         <hr className='border-1 flex-grow border-gray-400' />
-        <span className='font-["Dancing_Script"] text-3xl text-gray-500'>Queue System</span>
+        <span className="font-['Roboto_Slab'] text-2xl font-medium text-black">QGo Queue System</span>
         <hr className='border-1 flex-grow border-gray-400' />
       </div>
       <p className='font-["Montserrat"] text-2xl font-semibold text-gray-800'>Please get your queue here.</p>
