@@ -5,7 +5,7 @@ import WaitingListItem from './QueueDisplay/WaitingListItem';
 
 const QueueDisplay = () => {
   const [counters, setCounters] = useState([]);
-  const [queues, setQueues] = useState([]);
+  const [queues, setQueues] = useState([]);  
   const [error, setError] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
