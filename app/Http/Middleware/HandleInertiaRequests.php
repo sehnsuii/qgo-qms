@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Counters;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,6 +34,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'assignedCounterId' => $request->user()
+                    ? Counters::where('user_id', $request->user()->id)->value('id')
+                    : null,
+                'is_counter_login' => session('is_counter_login', false),
             ],
         ];
     }

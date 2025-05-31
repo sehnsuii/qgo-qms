@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('counters', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id')->index();
-            $table->string('name')->index();
-            $table->string('is_available')->default(1);
-            $table->string('is_open')->default(1);
+            $table->id()->autoIncrement();
             $table->timestamps();
+            $table->enum('status', ['Not Ready', 'Ready', 'Busy'])->default('Not Ready');
+            $table->foreignId('queue_id')->nullable()->constrained('queues')->onDelete('set null')->default(null);
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null')->default(null);
         });
     }
 
