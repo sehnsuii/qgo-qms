@@ -1,4 +1,4 @@
-import SecondaryButton from '@/Components/SecondaryButton'; // Keep SecondaryButton for service selection
+import SecondaryButton from '@/Components/SecondaryButton'; // keep secondary button
 import StepButtons from '@/Pages/QueueForm/StepButtons';
 import { Head } from '@inertiajs/react';
 import { FaBookOpen, FaBriefcaseMedical, FaClock, FaCross, FaFolderOpen, FaQuestionCircle } from 'react-icons/fa';

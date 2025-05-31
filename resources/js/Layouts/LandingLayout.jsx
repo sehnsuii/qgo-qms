@@ -27,8 +27,10 @@ const LandingLayout = ({ laravelVersion, phpVersion, children }) => {
 
       <div className='relative z-10 flex w-full flex-1 items-center justify-center'>{children}</div>
 
-      <footer className='relative z-10 mt-auto w-full bg-white py-4 text-center text-sm text-black shadow-md'>
-        QGo {laravelVersion} (PHP v{phpVersion})
+      <footer className='relative z-10 bg-green-100 py-4 text-center text-sm text-green-800'>
+        <p>
+          © {new Date().getFullYear()} City of San Pedro Laguna - QGO Queue Management System
+        </p>
       </footer>
     </div>
   );

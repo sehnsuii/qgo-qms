@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 const defaultStats = {
   total: 0,
   priority: 0,
-  nonPriority: 0, // Changed from 'regular' to 'nonPriority' to match QueueStats
+  nonPriority: 0,
   waiting: 0,
   serving: 0,
   completed: 0,
@@ -70,7 +70,6 @@ export default function Dashboard() {
           (acc, queue) => {
             acc.total += 1;
             if (queue.customer_type === 'Priority') acc.priority += 1;
-            // Corrected: Increment nonPriority for 'Regular' customer type
             if (queue.customer_type === 'Regular') acc.nonPriority += 1;
             if (queue.status === 'Waiting') acc.waiting += 1;
             if (queue.status === 'Now Serving') acc.serving += 1;

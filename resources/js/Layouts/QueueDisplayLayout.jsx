@@ -31,7 +31,7 @@ const QueueDisplayHeader = ({ currentTime }) => {
 const QueueDisplayFooter = () => {
   return (
     <div className='font-roboto mt-auto pt-6 text-center text-sm text-green-700'>
-      <p className='mt-2'>© {new Date().getFullYear()} City of San Pedro Laguna - Queue Management System</p>
+      <p className='mt-2'>© {new Date().getFullYear()} City of San Pedro Laguna - QGO Queue Management System</p>
     </div>
   );
 };

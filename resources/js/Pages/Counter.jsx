@@ -190,7 +190,7 @@ export default function Counter({ auth, counterId }) {
                       <SecondaryButton
                         className='mt-2'
                         onClick={() => updateReadiness(counterStatus === 'Ready' ? 'Not Ready' : 'Ready')}
-                        disabled={counterStatus === 'Busy'} // Only disable if busy
+                        disabled={counterStatus === 'Busy'}
                         title={counterStatus === 'Busy' ? 'Cannot change readiness while serving a customer' : ''}
                       >
                         {counterStatus === 'Ready' ? 'Set to Not Ready' : 'Set to Ready'}

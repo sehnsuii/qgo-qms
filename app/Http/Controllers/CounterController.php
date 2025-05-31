@@ -131,7 +131,7 @@ class CounterController extends Controller
 
         $counter->status = $newStatus;
         $counter->save();
-        $counter->load('queue.service'); // Reload relations for consistent response
+        $counter->load('queue.service');
 
         return response()->json($counter);
     }
@@ -145,12 +145,11 @@ class CounterController extends Controller
      */
     public function callNextQueueApi(Counters $counter): JsonResponse
     {
-        // Check if the counter is ready
+      
         if ($counter->status !== 'Ready') {
-            return response()->json(['message' => 'Counter is not ready.'], 409); // Conflict
+            return response()->json(['message' => 'Counter is not ready.'], 409); 
         }
 
-        // First try to get a priority customer
         $nextQueue = Queue::where('status', 'Waiting')
             ->where('customer_type', 'Priority')
             ->whereDate('created_at', today())
@@ -174,10 +173,9 @@ class CounterController extends Controller
         $nextQueue->save();
 
         $counter->queue_id = $nextQueue->id;
-        $counter->status = 'Busy'; // Explicitly set status to Busy
+        $counter->status = 'Busy'; // set status to busy
         $counter->save();
 
-        // Return the updated counter including the queue information
         $counter->load('queue.service');
         return response()->json($counter);
     }
